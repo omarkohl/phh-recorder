@@ -172,7 +172,7 @@ function App() {
                         <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">{player.cards}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <button
-                                className={`w-6 h-6 text-xs flex items-center justify-center ${player.isDealer ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-gray-200 text-gray-400'} rounded-full`}
+                                className={`w-6 h-6 text-xs flex items-center justify-center hover:bg-green-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 ${player.isDealer ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-gray-200 text-gray-400'} rounded-full`}
                                 tabIndex={0}
                                 aria-pressed={player.isDealer}
                                 aria-label={`Set ${player.name} as dealer`}
@@ -181,8 +181,13 @@ function App() {
                             </button>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                            <button className="bg-red-500 text-white px-2 py-1 rounded-md" tabIndex={-1}
-                                    onClick={() => removePlayer(player.id)}>Remove
+                            <button
+                                className={`bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 ${players.length <= 2 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                tabIndex={-1}
+                                onClick={() => removePlayer(player.id)}
+                                disabled={players.length <= 2}
+                            >
+                                Remove
                             </button>
                         </td>
                     </tr>
