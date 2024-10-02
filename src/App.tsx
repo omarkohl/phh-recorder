@@ -154,7 +154,7 @@ function App() {
                         <td className="px-6 py-4 whitespace-nowrap">
                             <input
                                 type="text"
-                                className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                                className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
                                 value={player.name}
                                 placeholder={`p${player.position}`}
                                 onChange={(e) => {
@@ -173,7 +173,7 @@ function App() {
                         <td className="px-6 py-4 whitespace-nowrap">
                             <button
                                 className={`w-6 h-6 text-xs flex items-center justify-center hover:bg-green-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 ${player.isDealer ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-gray-200 text-gray-400'} rounded-full`}
-                                tabIndex={0}
+                                tabIndex={-1}
                                 aria-pressed={player.isDealer}
                                 aria-label={`Set ${player.name} as dealer`}
                                 onClick={() => setDealer(player.id)}>
