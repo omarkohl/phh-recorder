@@ -1,6 +1,47 @@
-import './App.css'
+import {useState} from 'react';
+import './App.css';
+
+class Player {
+    id: string;
+    name: string;
+    initialStack: number;
+    stack: number;
+    cards: [string, string];
+    isDealer: boolean;
+    isActive: boolean;
+
+    constructor(name: string, initialStack: number, cards: [string, string], isDealer: boolean) {
+        this.id = crypto.randomUUID();
+        this.name = name;
+        this.initialStack = initialStack;
+        this.stack = initialStack;
+        this.cards = cards;
+        this.isDealer = isDealer;
+        this.isActive = true;
+    }
+}
 
 function App() {
+    const [players, setPlayers] = useState([
+        new Player('Alice', 1000, ['As', 'Ks'], false),
+        new Player('Bob', 1000, ['Qs', 'Js'], false),
+        new Player('Charlie', 1000, ['10s', '9s'], true),
+    ]);
+
+    const addPlayer = (name: string, initialStack: number, cards: [string, string]) => {
+        setPlayers([...players, new Player(name, initialStack, cards, false)]);
+    }
+
+    const removePlayer = (id: string) => {
+        setPlayers(players.filter(player => player.id !== id));
+    }
+
+    const setDealer = (id: string) => {
+        // There musts only be one dealer at a time.
+        players.forEach(player => player.isDealer = player.id === id);
+        setPlayers([...players]);
+    }
+
     return (
         <div className="container mx-auto p-4">
             <div className="mb-4">
@@ -15,7 +56,15 @@ function App() {
                        placeholder="Enter blinds, antes, and straddles (e.g., 1/2 blinds, 0.5 ante)"/>
             </div>
 
-            <button className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Player</button>
+            <div className="text-right">
+                <button
+                    className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    onClick={() => addPlayer('', 1000, ['??', '??'])}>
+                    Add Player
+                </button>
+                <span className="ml-2 text-gray-400">({players.length} players)</span>
+            </div>
+
 
             <table id="players-table" className="min-w-full divide-y divide-gray-200 mb-4">
                 <thead className="bg-gray-50">
@@ -34,28 +83,28 @@ function App() {
                 </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                <tr>
-                    <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">Alice</td>
-                    <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">500</td>
-                    <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">Ah, Ks</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                        <button className="bg-yellow-500 text-white px-2 py-1 rounded-full" tabIndex={-1}>D</button>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                        <button className="bg-red-500 text-white px-2 py-1 rounded-md" tabIndex={-1}>Remove</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">Bob</td>
-                    <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">450</td>
-                    <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">??, ??</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                        <button className="bg-yellow-500 text-white px-2 py-1 rounded-full" tabIndex={-1}></button>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                        <button className="bg-red-500 text-white px-2 py-1 rounded-md" tabIndex={-1}>Remove</button>
-                    </td>
-                </tr>
+                {players.map((player) => (
+                    <tr key={player.id}>
+                        <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">{player.name}</td>
+                        <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">{player.stack}</td>
+                        <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">{player.cards}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                            <button
+                                className={`w-6 h-6 text-xs flex items-center justify-center ${player.isDealer ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-gray-200 text-gray-400'} rounded-full`}
+                                tabIndex={0}
+                                aria-pressed={player.isDealer}
+                                aria-label={`Set ${player.name} as dealer`}
+                                onClick={() => setDealer(player.id)}>
+                                D
+                            </button>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                            <button className="bg-red-500 text-white px-2 py-1 rounded-md" tabIndex={-1}
+                                    onClick={() => removePlayer(player.id)}>Remove
+                            </button>
+                        </td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
 
@@ -87,7 +136,7 @@ function App() {
                 <p>[Flop] Dealing 5h, 6d, 7s</p>
             </div>
         </div>
-    )
+    );
 }
 
-export default App
+export default App;
