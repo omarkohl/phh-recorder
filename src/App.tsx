@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import './App.css';
 
-class Player {
+type Player = {
     id: string;
     name: string;
     initialStack: number;
@@ -9,38 +9,104 @@ class Player {
     cards: [string, string];
     isDealer: boolean;
     isActive: boolean;
-
-    constructor(name: string, initialStack: number, cards: [string, string], isDealer: boolean) {
-        this.id = crypto.randomUUID();
-        this.name = name;
-        this.initialStack = initialStack;
-        this.stack = initialStack;
-        this.cards = cards;
-        this.isDealer = isDealer;
-        this.isActive = true;
-    }
-}
+    position: number;
+};
 
 function App() {
-    const [players, setPlayers] = useState([
-        new Player('Alice', 1000, ['As', 'Ks'], false),
-        new Player('Bob', 1000, ['Qs', 'Js'], false),
-        new Player('Charlie', 1000, ['10s', '9s'], true),
+
+    const [players, setPlayers] = useState<Player[]>([
+        {
+            id: crypto.randomUUID(),
+            name: 'Alice',
+            initialStack: 1000,
+            stack: 1000,
+            cards: ['As', 'Ks'],
+            isDealer: false,
+            isActive: true,
+            position: 1
+        },
+        {
+            id: crypto.randomUUID(),
+            name: 'Bob',
+            initialStack: 1000,
+            stack: 1000,
+            cards: ['Qs', 'Js'],
+            isDealer: false,
+            isActive: true,
+            position: 2
+        },
+        {
+            id: crypto.randomUUID(),
+            name: 'Charlie',
+            initialStack: 1000,
+            stack: 1000,
+            cards: ['10s', '9s'],
+            isDealer: true,
+            isActive: true,
+            position: 3
+        },
     ]);
 
     const addPlayer = (name: string, initialStack: number, cards: [string, string]) => {
-        setPlayers([...players, new Player(name, initialStack, cards, false)]);
+        const dealerIndex = players.findIndex(player => player.isDealer);
+        const newPlayer: Player = {
+            id: crypto.randomUUID(),
+            name: name,
+            initialStack: initialStack,
+            stack: initialStack,
+            cards: cards,
+            isDealer: false,
+            isActive: true,
+            position: players.length + 1
+        };
+        const updatedPlayers = [...players, newPlayer];
+        for (let position = 1; position <= updatedPlayers.length; position++) {
+            let playerIndex = (dealerIndex + position) % updatedPlayers.length;
+            updatedPlayers[playerIndex].position = position;
+        }
+        setPlayers(updatedPlayers);
     }
 
     const removePlayer = (id: string) => {
-        setPlayers(players.filter(player => player.id !== id));
+        // only allow removing players if there are more than 2 players
+        if (players.length <= 2) {
+            return;
+        }
+
+        let updatedPlayers = [...players];
+        // find the dealer
+        let dealerIndex = updatedPlayers.findIndex(player => player.isDealer);
+        if (id === updatedPlayers[dealerIndex].id) { // remove the dealer
+            // find the next player in the list in order to set them as the dealer. it might have to wrap around
+            const nextDealerIndex = (dealerIndex + 1) % updatedPlayers.length;
+            updatedPlayers[dealerIndex].isDealer = false;
+            updatedPlayers[nextDealerIndex].isDealer = true;
+            dealerIndex = nextDealerIndex;
+        }
+        // remove the player
+        updatedPlayers = updatedPlayers.filter(player => player.id !== id);
+
+        // re-index the players
+        for (let position = 1; position <= updatedPlayers.length; position++) {
+            let playerIndex = (dealerIndex + position) % updatedPlayers.length;
+            updatedPlayers[playerIndex].position = position;
+        }
+        setPlayers(updatedPlayers);
     }
 
+
     const setDealer = (id: string) => {
-        // There musts only be one dealer at a time.
-        players.forEach(player => player.isDealer = player.id === id);
-        setPlayers([...players]);
-    }
+        const updatedPlayers = players.map(player => ({
+            ...player,
+            isDealer: player.id === id
+        }));
+        const dealerIndex = updatedPlayers.findIndex(player => player.isDealer);
+        for (let position = 1; position <= updatedPlayers.length; position++) {
+            let playerIndex = (dealerIndex + position) % updatedPlayers.length;
+            updatedPlayers[playerIndex].position = position;
+        }
+        setPlayers(updatedPlayers);
+    };
 
     return (
         <div className="container mx-auto p-4">
@@ -85,7 +151,23 @@ function App() {
                 <tbody className="bg-white divide-y divide-gray-200">
                 {players.map((player) => (
                     <tr key={player.id}>
-                        <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">{player.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                            <input
+                                type="text"
+                                className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                                value={player.name}
+                                placeholder={`p${player.position}`}
+                                onChange={(e) => {
+                                    const updatedPlayers = players.map(p => {
+                                        if (p.id === player.id) {
+                                            return {...p, name: e.target.value};
+                                        }
+                                        return p;
+                                    });
+                                    setPlayers(updatedPlayers);
+                                }}
+                            />
+                        </td>
                         <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">{player.stack}</td>
                         <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">{player.cards}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
