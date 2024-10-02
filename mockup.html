@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poker Hand Recorder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .action-input {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .action-input select, .action-input input {
+            width: calc(100% / 3 - 10px);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.2rem;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .history-log {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+        }
+
+        .history-log p {
+            margin: 0 0 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Poker Hand Recorder</h1>
+    </div>
+
+    <!-- Blinds, Antes, Straddles -->
+    <div class="form-group">
+        <label for="blinds">Blinds, Antes, and Straddles</label>
+        <input type="text" id="blinds" placeholder="Enter blinds, antes, and straddles (e.g., 1/2 blinds, 0.5 ante)">
+    </div>
+
+    <!-- Add player button -->
+    <button onclick="addPlayer()">Add Player</button>
+
+    <!-- Players Table -->
+    <table id="players-table">
+        <thead>
+        <tr>
+            <th>Player Name</th>
+            <th>Initial Stack</th>
+            <th>Hole Cards</th>
+            <th>Dealer</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td contenteditable="true">Alice</td>
+            <td contenteditable="true">500</td>
+            <td contenteditable="true">Ah, Ks</td>
+            <td>
+                <button class="dealer-btn" onclick="setDealer(this)" tabindex="-1">D</button>
+            </td>
+            <td>
+                <button onclick="removePlayer(this)" tabindex="-1">Remove</button>
+            </td>
+        </tr>
+        <tr>
+            <td contenteditable="true">Bob</td>
+            <td contenteditable="true">450</td>
+            <td contenteditable="true">??, ??</td>
+            <td>
+                <button class="dealer-btn" onclick="setDealer(this)" tabindex="-1"></button>
+            </td>
+            <td>
+                <button onclick="removePlayer(this)" tabindex="-1">Remove</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Action Step-by-Step Input -->
+    <h3>Next Action</h3>
+    <div class="action-input">
+        <select id="action-type">
+            <option value="deal">Deal Cards</option>
+            <option value="bet">Bet</option>
+            <option value="check">Check</option>
+            <option value="raise">Raise</option>
+            <option value="call">Call</option>
+            <option value="fold">Fold</option>
+            <option value="community-cards">Deal Community Cards</option>
+            <option value="showdown">Showdown</option>
+        </select>
+        <input type="text" id="action-detail" placeholder="Enter details (e.g., $50 bet, Qh on board)">
+        <button class="submit-btn" onclick="addAction()">Record Action</button>
+    </div>
+
+    <!-- History Log -->
+    <h3>Action History</h3>
+    <div class="history-log" id="history-log">
+        <p>[Pre-Flop] Alice raises to $6</p>
+        <p>[Pre-Flop] Bob calls</p>
+        <p>[Pre-Flop] Charlie folds</p>
+        <p>[Flop] Dealing 5h, 6d, 7s</p>
+    </div>
+
+</div>
+
+<script>
+    // Automatically select text on focus for all contenteditable cells
+    document.querySelectorAll('td[contenteditable="true"]').forEach(cell => {
+        cell.addEventListener('focus', function () {
+            selectText(this);
+        });
+    });
+
+    // Function to select the content in a contenteditable element
+    function selectText(element) {
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+
+    function addAction() {
+        // Get action type and details
+        const actionType = document.getElementById('action-type').value;
+        const actionDetail = document.getElementById('action-detail').value;
+
+        // Determine the current street based on action type
+        let street = '[Action]';
+        if (actionType === 'deal') street = '[Pre-Flop]';
+        else if (actionType === 'community-cards') street = '[Flop/Turn/River]';
+        else if (actionType === 'showdown') street = '[Showdown]';
+
+        // Create a new history log entry
+        const historyLog = document.getElementById('history-log');
+        const newAction = document.createElement('p');
+        newAction.textContent = `${street} ${actionDetail}`;
+        historyLog.appendChild(newAction);
+
+        // Scroll to bottom of history log
+        historyLog.scrollTop = historyLog.scrollHeight;
+
+        // Clear input fields after adding the action
+        document.getElementById('action-type').value = '';
+        document.getElementById('action-detail').value = '';
+    }
+
+    // Set the dealer for the selected row
+    function setDealer(button) {
+        // Remove 'D' from any other player
+        const allButtons = document.querySelectorAll('.dealer-btn');
+        allButtons.forEach(btn => btn.innerText = '');
+
+        // Set 'D' for the selected player
+        button.innerText = 'D';
+    }
+
+    // Add a new player row
+    function addPlayer() {
+        const table = document.getElementById('players-table').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+
+        newRow.innerHTML = `
+      <td contenteditable="true">pN</td>
+      <td contenteditable="true">100</td>
+      <td>??, ??</td>
+      <td><button class="dealer-btn" onclick="setDealer(this)" tabindex="-1"></button></td>
+      <td><button onclick="removePlayer(this)" tabindex="-1">Remove</button></td>
+    `;
+
+        // Add focus event to new contenteditable cells
+        newRow.cells[0].addEventListener('focus', function () {
+            selectText(this);
+        });
+        newRow.cells[1].addEventListener('focus', function () {
+            selectText(this);
+        });
+
+        // Focus on the new player's name field
+        newRow.cells[0].focus();
+    }
+
+    // Remove a player row
+    function removePlayer(button) {
+        const row = button.parentNode.parentNode;
+        row.remove();
+    }
+</script>
+
+</body>
+</html>
