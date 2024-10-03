@@ -10,7 +10,12 @@ export function CardInput<T extends Card[]>(props: Readonly<{
 
     const handleBlur = () => {
         const expectedNumCards = props.cards.length;
-        const cardStrings = inputValue.replace(/\s/g, '').match(/.{1,2}/g) || [];
+        let content = inputValue.replace(/\s/g, '');
+        if (content.length === 0) {
+            // set all to unknown as a convenience to the user
+            content = '??'.repeat(expectedNumCards);
+        }
+        const cardStrings = content.match(/.{1,2}/g) || [];
         if (cardStrings.length !== expectedNumCards) {
             setError(`Please enter exactly ${expectedNumCards} cards.`);
             return;
@@ -30,7 +35,7 @@ export function CardInput<T extends Card[]>(props: Readonly<{
         <div>
             <input
                 type="text"
-                className={`w-full px-2 py-1 border ${error ? 'border-red-500' : 'border-transparent'} bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text`}
+                className={`w-full px-2 py-1 border ${error ? 'border-red-500' : 'border-transparent'} bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text font-mono`}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onBlur={handleBlur}
