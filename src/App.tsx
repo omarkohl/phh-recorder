@@ -1,12 +1,14 @@
 import {useState} from 'react';
 import './App.css';
+import {CardInput} from "./CardInput.tsx";
+import Card from "./Card.ts";
 
 type Player = {
     id: string;
     name: string;
     initialStack: number;
     stack: number;
-    cards: [string, string];
+    cards: [Card, Card];
     isDealer: boolean;
     isActive: boolean;
     position: number;
@@ -20,7 +22,7 @@ function App() {
             name: 'Alice',
             initialStack: 1000,
             stack: 1000,
-            cards: ['As', 'Ks'],
+            cards: [new Card('A', 's'), new Card('K', 's')],
             isDealer: false,
             isActive: true,
             position: 1
@@ -30,7 +32,7 @@ function App() {
             name: 'Bob',
             initialStack: 1000,
             stack: 1000,
-            cards: ['Qs', 'Js'],
+            cards: [new Card('Q', 'h'), new Card('J', 's')],
             isDealer: false,
             isActive: true,
             position: 2
@@ -40,14 +42,14 @@ function App() {
             name: 'Charlie',
             initialStack: 1000,
             stack: 1000,
-            cards: ['10s', '9s'],
+            cards: [new Card('9', 'c'), new Card('8', 'd')],
             isDealer: true,
             isActive: true,
             position: 3
         },
     ]);
 
-    const addPlayer = (name: string, initialStack: number, cards: [string, string]) => {
+    const addPlayer = (name: string, initialStack: number, cards: [Card, Card]) => {
         const dealerIndex = players.findIndex(player => player.isDealer);
         const newPlayer: Player = {
             id: crypto.randomUUID(),
@@ -125,7 +127,7 @@ function App() {
             <div className="text-right">
                 <button
                     className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                    onClick={() => addPlayer('', 1000, ['??', '??'])}>
+                    onClick={() => addPlayer('', 1000, [new Card('?', '?'), new Card('?', '?')])}>
                     Add Player
                 </button>
                 <span className="ml-2 text-gray-400">({players.length} players)</span>
@@ -168,8 +170,36 @@ function App() {
                                 }}
                             />
                         </td>
-                        <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">{player.stack}</td>
-                        <td contentEditable="true" className="px-6 py-4 whitespace-nowrap">{player.cards}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                            <input
+                                type="number"
+                                className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                                value={player.initialStack}
+                                onChange={(e) => {
+                                    const updatedPlayers = players.map(p => {
+                                        if (p.id === player.id) {
+                                            return {...p, initialStack: parseInt(e.target.value)};
+                                        }
+                                        return p;
+                                    });
+                                    setPlayers(updatedPlayers);
+                                }}
+                            />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                            <CardInput<[Card, Card]>
+                                cards={player.cards}
+                                onCardsUpdate={(updatedCards) => {
+                                    const updatedPlayers = players.map(p => {
+                                        if (p.id === player.id) {
+                                            return {...p, cards: updatedCards};
+                                        }
+                                        return p;
+                                    });
+                                    setPlayers(updatedPlayers);
+                                }}
+                            />
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <button
                                 className={`w-6 h-6 text-xs flex items-center justify-center hover:bg-green-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 ${player.isDealer ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-gray-200 text-gray-400'} rounded-full`}
