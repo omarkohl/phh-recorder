@@ -146,7 +146,22 @@ function App() {
             <div className="text-right">
                 <button
                     className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                    onClick={() => addPlayer('', 1000, [new Card('?', '?'), new Card('?', '?')])}>
+                    onClick={
+                        () => {
+                            let initialStack: number;
+                            if (blinds.length === 0) {
+                                // If there are no blinds, set the initial
+                                // stack to 100 because we need to set something.
+                                // Usually the user would set the blinds first.
+                                initialStack = 100;
+                            } else {
+                                // Default to 100 big blinds
+                                initialStack = 100 * blinds[blinds.length - 1];
+                            }
+                            addPlayer('', initialStack, [new Card('?', '?'), new Card('?', '?')])
+                        }
+                    }
+                >
                     Add Player
                 </button>
                 <span className="ml-2 text-gray-400">({players.length} players)</span>
