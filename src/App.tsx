@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import './App.css';
 import {CardInput} from "./CardInput.tsx";
 import Card from "./Card.ts";
@@ -16,13 +16,12 @@ type Player = {
 };
 
 function App() {
-
     const [players, setPlayers] = useState<Player[]>([
         {
             id: crypto.randomUUID(),
-            name: 'Alice',
-            initialStack: 1000,
-            stack: 1000,
+            name: 'Daniel',
+            initialStack: 100,
+            stack: 100,
             cards: [new Card('A', 's'), new Card('K', 's')],
             isDealer: false,
             isActive: true,
@@ -30,9 +29,9 @@ function App() {
         },
         {
             id: crypto.randomUUID(),
-            name: 'Bob',
-            initialStack: 1000,
-            stack: 1000,
+            name: 'Maria',
+            initialStack: 100,
+            stack: 100,
             cards: [new Card('Q', 'h'), new Card('J', 's')],
             isDealer: false,
             isActive: true,
@@ -40,9 +39,9 @@ function App() {
         },
         {
             id: crypto.randomUUID(),
-            name: 'Charlie',
-            initialStack: 1000,
-            stack: 1000,
+            name: 'Liv',
+            initialStack: 100,
+            stack: 100,
             cards: [new Card('9', 'c'), new Card('8', 'd')],
             isDealer: true,
             isActive: true,
@@ -50,7 +49,25 @@ function App() {
         },
     ]);
 
+    const [blinds, setBlinds] = useState<number[]>([]);
+    const [playersModified, setPlayersModified] = useState(false);
+
+    // Set initial stack sizes based on the big blind.
+    // This effect runs only once when blinds are set and players have not
+    // been modified i.e. it only affects the three initial default players.
+    useEffect(() => {
+        if (!playersModified && blinds.length > 0) {
+            const bigBlind = blinds[blinds.length - 1];
+            setPlayers(players.map(player => ({
+                ...player,
+                initialStack: 100 * bigBlind,
+                stack: 100 * bigBlind
+            })));
+        }
+    }, [blinds, playersModified]);
+
     const addPlayer = (name: string, initialStack: number, cards: [Card, Card]) => {
+        setPlayersModified(true);
         const dealerIndex = players.findIndex(player => player.isDealer);
         const newPlayer: Player = {
             id: crypto.randomUUID(),
@@ -68,37 +85,38 @@ function App() {
             updatedPlayers[playerIndex].position = position;
         }
         setPlayers(updatedPlayers);
-    }
+    };
+
+    const updatePlayer = (id: string, updatedPlayer: Partial<Player>) => {
+        setPlayersModified(true);
+        setPlayers(players.map(player => player.id === id ? {...player, ...updatedPlayer} : player));
+    };
 
     const removePlayer = (id: string) => {
-        // only allow removing players if there are more than 2 players
+        setPlayersModified(true);
         if (players.length <= 2) {
             return;
         }
 
         let updatedPlayers = [...players];
-        // find the dealer
         let dealerIndex = updatedPlayers.findIndex(player => player.isDealer);
-        if (id === updatedPlayers[dealerIndex].id) { // remove the dealer
-            // find the next player in the list in order to set them as the dealer. it might have to wrap around
+        if (id === updatedPlayers[dealerIndex].id) {
             const nextDealerIndex = (dealerIndex + 1) % updatedPlayers.length;
             updatedPlayers[dealerIndex].isDealer = false;
             updatedPlayers[nextDealerIndex].isDealer = true;
             dealerIndex = nextDealerIndex;
         }
-        // remove the player
         updatedPlayers = updatedPlayers.filter(player => player.id !== id);
 
-        // re-index the players
         for (let position = 1; position <= updatedPlayers.length; position++) {
             let playerIndex = (dealerIndex + position) % updatedPlayers.length;
             updatedPlayers[playerIndex].position = position;
         }
         setPlayers(updatedPlayers);
-    }
-
+    };
 
     const setDealer = (id: string) => {
+        setPlayersModified(true);
         const updatedPlayers = players.map(player => ({
             ...player,
             isDealer: player.id === id
@@ -111,8 +129,6 @@ function App() {
         setPlayers(updatedPlayers);
     };
 
-    const [blinds, setBlinds] = useState<number[]>([]);
-
     return (
         <div className="container mx-auto p-4">
             <div className="mb-4">
@@ -120,16 +136,13 @@ function App() {
             </div>
 
             <div className="mb-4">
-                <BlindsInput initialBlinds={blinds} onBlindsChange={
-                    (blinds) => setBlinds(blinds)
-                }/>
+                <BlindsInput initialBlinds={blinds} onBlindsChange={setBlinds}/>
 
                 <label htmlFor="ante" className="block text-sm font-medium text-gray-700 mt-4">Ante</label>
                 <input type="text" id="ante"
                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                        placeholder="Enter ante (e.g. 0.5)"/>
 
-                {/* TODO the user needs to be able to specify which players posts the antes in this case */}
                 <div className="mt-2 flex items-center">
                     <input id="ante-per-round" name="ante-per-round" type="checkbox"
                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
@@ -146,27 +159,20 @@ function App() {
             <div className="text-right">
                 <button
                     className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                    onClick={
-                        () => {
-                            let initialStack: number;
-                            if (blinds.length === 0) {
-                                // If there are no blinds, set the initial
-                                // stack to 100 because we need to set something.
-                                // Usually the user would set the blinds first.
-                                initialStack = 100;
-                            } else {
-                                // Default to 100 big blinds
-                                initialStack = 100 * blinds[blinds.length - 1];
-                            }
-                            addPlayer('', initialStack, [new Card('?', '?'), new Card('?', '?')])
+                    onClick={() => {
+                        let initialStack: number;
+                        if (blinds.length === 0) {
+                            initialStack = 100;
+                        } else {
+                            initialStack = 100 * blinds[blinds.length - 1];
                         }
-                    }
+                        addPlayer('', initialStack, [new Card('?', '?'), new Card('?', '?')]);
+                    }}
                 >
                     Add Player
                 </button>
                 <span className="ml-2 text-gray-400">({players.length} players)</span>
             </div>
-
 
             <table id="players-table" className="min-w-full divide-y divide-gray-200 mb-4">
                 <thead className="bg-gray-50">
@@ -193,15 +199,7 @@ function App() {
                                 className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
                                 value={player.name}
                                 placeholder={`p${player.position}`}
-                                onChange={(e) => {
-                                    const updatedPlayers = players.map(p => {
-                                        if (p.id === player.id) {
-                                            return {...p, name: e.target.value};
-                                        }
-                                        return p;
-                                    });
-                                    setPlayers(updatedPlayers);
-                                }}
+                                onChange={(e) => updatePlayer(player.id, {name: e.target.value})}
                             />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap flex items-center">
@@ -209,27 +207,13 @@ function App() {
                                 type="number"
                                 className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
                                 value={player.initialStack}
-                                onChange={(e) => {
-                                    const updatedPlayers = players.map(p => {
-                                        if (p.id === player.id) {
-                                            return {...p, initialStack: parseInt(e.target.value)};
-                                        }
-                                        return p;
-                                    });
-                                    setPlayers(updatedPlayers);
-                                }}
+                                onChange={(e) => updatePlayer(player.id, {initialStack: parseInt(e.target.value)})}
                             />
                             <button
                                 className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
                                 onClick={() => {
                                     const bigBlind = blinds[blinds.length - 1];
-                                    const updatedPlayers = players.map(p => {
-                                        if (p.id === player.id) {
-                                            return {...p, initialStack: p.initialStack + 10 * bigBlind};
-                                        }
-                                        return p;
-                                    });
-                                    setPlayers(updatedPlayers);
+                                    updatePlayer(player.id, {initialStack: player.initialStack + 10 * bigBlind});
                                 }}
                                 disabled={blinds.length === 0}
                             >
@@ -239,13 +223,7 @@ function App() {
                                 className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
                                 onClick={() => {
                                     const bigBlind = blinds[blinds.length - 1];
-                                    const updatedPlayers = players.map(p => {
-                                        if (p.id === player.id) {
-                                            return {...p, initialStack: p.initialStack - 10 * bigBlind};
-                                        }
-                                        return p;
-                                    });
-                                    setPlayers(updatedPlayers);
+                                    updatePlayer(player.id, {initialStack: player.initialStack - 10 * bigBlind});
                                 }}
                                 disabled={blinds.length === 0}
                             >
@@ -255,15 +233,7 @@ function App() {
                         <td className="px-6 py-4 whitespace-nowrap">
                             <CardInput<[Card, Card]>
                                 cards={player.cards}
-                                onCardsUpdate={(updatedCards) => {
-                                    const updatedPlayers = players.map(p => {
-                                        if (p.id === player.id) {
-                                            return {...p, cards: updatedCards};
-                                        }
-                                        return p;
-                                    });
-                                    setPlayers(updatedPlayers);
-                                }}
+                                onCardsUpdate={(updatedCards) => updatePlayer(player.id, {cards: updatedCards})}
                             />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
