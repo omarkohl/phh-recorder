@@ -129,6 +129,21 @@ function App() {
         setPlayers(updatedPlayers);
     };
 
+    function download() {
+        // Download game state
+        const gameData = {
+            players: players,
+            blinds: blinds
+        };
+        const blob = new Blob([JSON.stringify(gameData)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'game.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
     return (
         <div className="container mx-auto p-4">
             <div className="mb-4">
@@ -290,6 +305,34 @@ function App() {
                 <p>[Pre-Flop] Charlie folds</p>
                 <p>[Flop] Dealing 5h, 6d, 7s</p>
             </div>
+
+            <button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                onClick={() => {
+                    download();
+                    // move dealer button
+                    const currentDealerIndex = players.findIndex(player => player.isDealer);
+                    const nextDealerIndex = (currentDealerIndex + 1) % players.length;
+                    setDealer(players[nextDealerIndex].id);
+                    // TODO reset action history
+                }}
+            >
+                Download & Continue Game
+            </button>
+            <button
+                className="mt-4 ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                onClick={download}
+            >
+                Download Only
+            </button>
+            <button
+                className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                onClick={() => {
+                    // TODO reset action history
+                }}
+            >
+                Clear Actions
+            </button>
         </div>
     );
 }
