@@ -2,6 +2,7 @@ import {useState} from 'react';
 import './App.css';
 import {CardInput} from "./CardInput.tsx";
 import Card from "./Card.ts";
+import BlindsInput from "./BlindsInput.tsx";
 
 type Player = {
     id: string;
@@ -110,6 +111,8 @@ function App() {
         setPlayers(updatedPlayers);
     };
 
+    const [blinds, setBlinds] = useState<number[]>([]);
+
     return (
         <div className="container mx-auto p-4">
             <div className="mb-4">
@@ -117,10 +120,9 @@ function App() {
             </div>
 
             <div className="mb-4">
-                <label htmlFor="blinds" className="block text-sm font-medium text-gray-700">Blinds</label>
-                <input type="text" id="blinds"
-                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                       placeholder="Enter blinds (e.g. 1, 2)"/>
+                <BlindsInput initialBlinds={blinds} onBlindsChange={
+                    (blinds) => setBlinds(blinds)
+                }/>
 
                 <label htmlFor="ante" className="block text-sm font-medium text-gray-700 mt-4">Ante</label>
                 <input type="text" id="ante"
