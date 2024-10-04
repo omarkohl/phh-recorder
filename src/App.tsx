@@ -207,7 +207,7 @@ function App() {
                                 type="number"
                                 className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
                                 value={player.initialStack}
-                                onChange={(e) => updatePlayer(player.id, {initialStack: parseInt(e.target.value)})}
+                                onChange={(e) => updatePlayer(player.id, {initialStack: Number(e.target.value)})}
                             />
                             <button
                                 className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
