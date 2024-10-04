@@ -1,3 +1,5 @@
+import {stringify} from "smol-toml";
+
 import {useState, useEffect} from 'react';
 import './App.css';
 import {CardInput} from "./CardInput.tsx";
@@ -130,16 +132,31 @@ function App() {
     };
 
     function download() {
-        // Download game state
+        const dealerIndex = players.findIndex(player => player.isDealer);
+        const nextPlayerIndex = (dealerIndex + 1) % players.length;
+
+        // players must be sorted so that the small blind is first
+        const sortedPlayers = players.slice(nextPlayerIndex).concat(players.slice(0, nextPlayerIndex));
+
+        // Convert game state to TOML
         const gameData = {
-            players: players,
-            blinds: blinds
+            variant: 'NT',
+            ante_trimming_status: true,
+            antes: sortedPlayers.map(() => 0),
+            blinds_or_straddles: sortedPlayers.map((_, index) => blinds[index] || 0),
+            min_bet: blinds[blinds.length - 1],
+            starting_stacks: sortedPlayers.map(player => player.initialStack),
+            actions: [],
+            players: sortedPlayers.map(player => player.name),
         };
-        const blob = new Blob([JSON.stringify(gameData)], {type: 'application/json'});
+        const tomlString = stringify(gameData) + '\n';
+
+        // Create a blob and download the file
+        const blob = new Blob([tomlString], {type: 'application/toml'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'game.json';
+        a.download = 'game.phh';
         a.click();
         URL.revokeObjectURL(url);
     }
@@ -265,7 +282,7 @@ function App() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <button
-                                className={`bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 ${players.length <= 2 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-red-200 disabled:cursor-not-allowed`}
                                 tabIndex={-1}
                                 onClick={() => removePlayer(player.id)}
                                 disabled={players.length <= 2}
@@ -307,7 +324,7 @@ function App() {
             </div>
 
             <button
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-200 disabled:text-gray-400 disabled:cursor-not-allowed"
                 onClick={() => {
                     download();
                     // move dealer button
@@ -316,12 +333,14 @@ function App() {
                     setDealer(players[nextDealerIndex].id);
                     // TODO reset action history
                 }}
+                disabled={players.length <= 2 || blinds.length === 0}
             >
                 Download & Continue Game
             </button>
             <button
-                className="mt-4 ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                className="mt-4 ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 onClick={download}
+                disabled={players.length <= 2 || blinds.length === 0}
             >
                 Download Only
             </button>
