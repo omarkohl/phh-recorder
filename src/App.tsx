@@ -216,6 +216,7 @@ function App() {
                                     updatePlayer(player.id, {initialStack: player.initialStack + 10 * bigBlind});
                                 }}
                                 disabled={blinds.length === 0}
+                                tabIndex={-1}
                             >
                                 +
                             </button>
@@ -226,6 +227,7 @@ function App() {
                                     updatePlayer(player.id, {initialStack: player.initialStack - 10 * bigBlind});
                                 }}
                                 disabled={blinds.length === 0}
+                                tabIndex={-1}
                             >
                                 -
                             </button>
