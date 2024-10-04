@@ -189,7 +189,7 @@ function App() {
                                 }}
                             />
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap flex items-center">
                             <input
                                 type="number"
                                 className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
@@ -204,6 +204,38 @@ function App() {
                                     setPlayers(updatedPlayers);
                                 }}
                             />
+                            <button
+                                className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+                                onClick={() => {
+                                    const bigBlind = blinds[blinds.length - 1];
+                                    const updatedPlayers = players.map(p => {
+                                        if (p.id === player.id) {
+                                            return {...p, initialStack: p.initialStack + 10 * bigBlind};
+                                        }
+                                        return p;
+                                    });
+                                    setPlayers(updatedPlayers);
+                                }}
+                                disabled={blinds.length === 0}
+                            >
+                                +
+                            </button>
+                            <button
+                                className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+                                onClick={() => {
+                                    const bigBlind = blinds[blinds.length - 1];
+                                    const updatedPlayers = players.map(p => {
+                                        if (p.id === player.id) {
+                                            return {...p, initialStack: p.initialStack - 10 * bigBlind};
+                                        }
+                                        return p;
+                                    });
+                                    setPlayers(updatedPlayers);
+                                }}
+                                disabled={blinds.length === 0}
+                            >
+                                -
+                            </button>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <CardInput<[Card, Card]>
