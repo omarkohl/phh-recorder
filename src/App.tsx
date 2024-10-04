@@ -117,11 +117,28 @@ function App() {
             </div>
 
             <div className="mb-4">
-                <label htmlFor="blinds" className="block text-sm font-medium text-gray-700">Blinds, Antes, and
-                    Straddles</label>
+                <label htmlFor="blinds" className="block text-sm font-medium text-gray-700">Blinds</label>
                 <input type="text" id="blinds"
                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                       placeholder="Enter blinds, antes, and straddles (e.g., 1/2 blinds, 0.5 ante)"/>
+                       placeholder="Enter blinds (e.g. 1, 2)"/>
+
+                <label htmlFor="ante" className="block text-sm font-medium text-gray-700 mt-4">Ante</label>
+                <input type="text" id="ante"
+                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                       placeholder="Enter ante (e.g. 0.5)"/>
+
+                {/* TODO the user needs to be able to specify which players posts the antes in this case */}
+                <div className="mt-2 flex items-center">
+                    <input id="ante-per-round" name="ante-per-round" type="checkbox"
+                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
+                    <label htmlFor="ante-per-round" className="ml-2 block text-sm text-gray-900">Ante collected once per
+                        round</label>
+                </div>
+
+                <label htmlFor="straddles" className="block text-sm font-medium text-gray-700 mt-4">Straddles</label>
+                <input type="text" id="straddles"
+                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                       placeholder="Enter straddles (e.g. 4, 8)"/>
             </div>
 
             <div className="text-right">
