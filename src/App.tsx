@@ -1,21 +1,12 @@
 import {stringify} from "smol-toml";
 
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import './App.css';
 import {CardInput} from "./CardInput.tsx";
 import Card from "./Card.ts";
 import BlindsInput from "./BlindsInput.tsx";
-
-type Player = {
-    id: string;
-    name: string;
-    initialStack: number;
-    stack: number;
-    cards: [Card, Card];
-    isDealer: boolean;
-    isActive: boolean;
-    position: number;
-};
+import Actions from "./Actions.tsx";
+import {Player} from "./Player.ts";
 
 function App() {
     const [players, setPlayers] = useState<Player[]>([
@@ -297,33 +288,9 @@ function App() {
                 </tbody>
             </table>
 
-            <h3 className="text-lg font-medium mb-2">Next Action</h3>
-            <div className="mb-4">
-                <select id="action-type"
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    <option value="deal">Deal Cards</option>
-                    <option value="bet">Bet</option>
-                    <option value="check">Check</option>
-                    <option value="raise">Raise</option>
-                    <option value="call">Call</option>
-                    <option value="fold">Fold</option>
-                    <option value="community-cards">Deal Community Cards</option>
-                    <option value="showdown">Showdown</option>
-                </select>
-                <input type="text" id="action-detail"
-                       className="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                       placeholder="Enter details (e.g., $50 bet, Qh on board)"/>
-                <button className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Record Action
-                </button>
-            </div>
-
-            <h3 className="text-lg font-medium mb-2">Action History</h3>
-            <div className="bg-gray-100 p-4 rounded-md" id="history-log">
-                <p>[Pre-Flop] Alice raises to $6</p>
-                <p>[Pre-Flop] Bob calls</p>
-                <p>[Pre-Flop] Charlie folds</p>
-                <p>[Flop] Dealing 5h, 6d, 7s</p>
-            </div>
+            <Actions players={players} updatePlayer={
+                (id: string, updates) => updatePlayer(id, updates)
+            }/>
 
             <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-200 disabled:text-gray-400 disabled:cursor-not-allowed"
