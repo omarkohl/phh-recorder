@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import Card from './Card';
 
 export function CardInput<T extends Card[]>(props: Readonly<{
@@ -7,6 +7,10 @@ export function CardInput<T extends Card[]>(props: Readonly<{
 }>) {
     const [inputValue, setInputValue] = useState(props.cards.map(card => card.toString()).join(''));
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setInputValue(props.cards.map(card => card.toString()).join(''));
+    }, [props.cards]);
 
     const handleBlur = () => {
         const expectedNumCards = props.cards.length;

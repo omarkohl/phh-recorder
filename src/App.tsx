@@ -119,16 +119,18 @@ function App() {
 
     const setDealer = (id: string) => {
         setPlayersModified(true);
-        const updatedPlayers = players.map(player => ({
-            ...player,
-            isDealer: player.id === id
-        }));
-        const dealerIndex = updatedPlayers.findIndex(player => player.isDealer);
-        for (let position = 1; position <= updatedPlayers.length; position++) {
-            let playerIndex = (dealerIndex + position) % updatedPlayers.length;
-            updatedPlayers[playerIndex].position = position;
-        }
-        setPlayers(updatedPlayers);
+        setPlayers((players) => {
+            const updatedPlayers = players.map(player => ({
+                ...player,
+                isDealer: player.id === id
+            }));
+            const dealerIndex = updatedPlayers.findIndex(player => player.isDealer);
+            for (let position = 1; position <= updatedPlayers.length; position++) {
+                let playerIndex = (dealerIndex + position) % updatedPlayers.length;
+                updatedPlayers[playerIndex].position = position;
+            }
+            return updatedPlayers;
+        });
     };
 
     function download() {
@@ -331,6 +333,13 @@ function App() {
                     const currentDealerIndex = players.findIndex(player => player.isDealer);
                     const nextDealerIndex = (currentDealerIndex + 1) % players.length;
                     setDealer(players[nextDealerIndex].id);
+
+                    setPlayersModified(true);
+                    setPlayers((players) => (players.map(player => ({
+                        ...player,
+                        cards: [new Card('?', '?'), new Card('?', '?')]
+                    }))));
+
                     // TODO reset action history
                 }}
                 disabled={players.length <= 2 || blinds.length === 0}
