@@ -247,23 +247,23 @@ function App() {
                                 className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
                                 onClick={() => {
                                     const bigBlind = blinds[blinds.length - 1];
-                                    updatePlayer(player.id, {initialStack: player.initialStack + 10 * bigBlind});
-                                }}
-                                disabled={blinds.length === 0}
-                                tabIndex={-1}
-                            >
-                                +
-                            </button>
-                            <button
-                                className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
-                                onClick={() => {
-                                    const bigBlind = blinds[blinds.length - 1];
                                     updatePlayer(player.id, {initialStack: player.initialStack - 10 * bigBlind});
                                 }}
                                 disabled={blinds.length === 0}
                                 tabIndex={-1}
                             >
                                 -
+                            </button>
+                            <button
+                                className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+                                onClick={() => {
+                                    const bigBlind = blinds[blinds.length - 1];
+                                    updatePlayer(player.id, {initialStack: player.initialStack + 10 * bigBlind});
+                                }}
+                                disabled={blinds.length === 0}
+                                tabIndex={-1}
+                            >
+                                +
                             </button>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
