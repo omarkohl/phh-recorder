@@ -146,7 +146,7 @@ function App() {
             blinds_or_straddles: sortedPlayers.map((_, index) => blinds[index] || 0),
             min_bet: blinds[blinds.length - 1],
             starting_stacks: sortedPlayers.map(player => player.initialStack),
-            actions: [],
+            actions: sortedPlayers.map(player => `d dh p${player.position} ` + player.cards.map(card => card.toString()).join('')),
             players: sortedPlayers.map(player => player.name),
         };
         const tomlString = stringify(gameData) + '\n';
