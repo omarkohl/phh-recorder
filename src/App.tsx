@@ -7,6 +7,7 @@ import Card from "./Card.ts";
 import BlindsInput from "./BlindsInput.tsx";
 import Actions from "./Actions.tsx";
 import {Player} from "./Player.ts";
+import Action from "./Action.ts";
 
 function App() {
     const [players, setPlayers] = useState<Player[]>([
@@ -123,6 +124,8 @@ function App() {
             return updatedPlayers;
         });
     };
+
+    const [actions, setActions] = useState<Action[]>([]);
 
     function download() {
         const dealerIndex = players.findIndex(player => player.isDealer);
@@ -290,6 +293,8 @@ function App() {
 
             <Actions players={players} updatePlayer={
                 (id: string, updates) => updatePlayer(id, updates)
+            } actions={actions} appendAction={
+                (action: Action) => setActions([...actions, action])
             }/>
 
             <button
