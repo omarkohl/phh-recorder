@@ -6,7 +6,7 @@ export type Player = {
     initialStack: number;
     stack: number;
     cards: [Card, Card];
-    isDealer: boolean;
+    isButton: boolean;
     isActive: boolean;
     position: number;
 };

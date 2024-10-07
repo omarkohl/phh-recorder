@@ -17,7 +17,7 @@ function App() {
             initialStack: 100,
             stack: 100,
             cards: [new Card('A', 's'), new Card('K', 's')],
-            isDealer: false,
+            isButton: false,
             isActive: true,
             position: 1
         },
@@ -27,7 +27,7 @@ function App() {
             initialStack: 100,
             stack: 100,
             cards: [new Card('Q', 'h'), new Card('J', 's')],
-            isDealer: false,
+            isButton: false,
             isActive: true,
             position: 2
         },
@@ -37,7 +37,7 @@ function App() {
             initialStack: 100,
             stack: 100,
             cards: [new Card('9', 'c'), new Card('8', 'd')],
-            isDealer: true,
+            isButton: true,
             isActive: true,
             position: 3
         },
@@ -62,20 +62,20 @@ function App() {
 
     const addPlayer = (name: string, initialStack: number, cards: [Card, Card]) => {
         setPlayersModified(true);
-        const dealerIndex = players.findIndex(player => player.isDealer);
+        const buttonIndex = players.findIndex(player => player.isButton);
         const newPlayer: Player = {
             id: crypto.randomUUID(),
             name: name,
             initialStack: initialStack,
             stack: initialStack,
             cards: cards,
-            isDealer: false,
+            isButton: false,
             isActive: true,
             position: players.length + 1
         };
         const updatedPlayers = [...players, newPlayer];
         for (let position = 1; position <= updatedPlayers.length; position++) {
-            let playerIndex = (dealerIndex + position) % updatedPlayers.length;
+            let playerIndex = (buttonIndex + position) % updatedPlayers.length;
             updatedPlayers[playerIndex].position = position;
         }
         setPlayers(updatedPlayers);
@@ -93,32 +93,32 @@ function App() {
         }
 
         let updatedPlayers = [...players];
-        let dealerIndex = updatedPlayers.findIndex(player => player.isDealer);
-        if (id === updatedPlayers[dealerIndex].id) {
-            const nextDealerIndex = (dealerIndex + 1) % updatedPlayers.length;
-            updatedPlayers[dealerIndex].isDealer = false;
-            updatedPlayers[nextDealerIndex].isDealer = true;
-            dealerIndex = nextDealerIndex;
+        let buttonIndex = updatedPlayers.findIndex(player => player.isButton);
+        if (id === updatedPlayers[buttonIndex].id) {
+            const nextButtonIndex = (buttonIndex + 1) % updatedPlayers.length;
+            updatedPlayers[buttonIndex].isButton = false;
+            updatedPlayers[nextButtonIndex].isButton = true;
+            buttonIndex = nextButtonIndex;
         }
         updatedPlayers = updatedPlayers.filter(player => player.id !== id);
 
         for (let position = 1; position <= updatedPlayers.length; position++) {
-            let playerIndex = (dealerIndex + position) % updatedPlayers.length;
+            let playerIndex = (buttonIndex + position) % updatedPlayers.length;
             updatedPlayers[playerIndex].position = position;
         }
         setPlayers(updatedPlayers);
     };
 
-    const setDealer = (id: string) => {
+    const setButton = (id: string) => {
         setPlayersModified(true);
         setPlayers((players) => {
             const updatedPlayers = players.map(player => ({
                 ...player,
-                isDealer: player.id === id
+                isButton: player.id === id
             }));
-            const dealerIndex = updatedPlayers.findIndex(player => player.isDealer);
+            const buttonIndex = updatedPlayers.findIndex(player => player.isButton);
             for (let position = 1; position <= updatedPlayers.length; position++) {
-                let playerIndex = (dealerIndex + position) % updatedPlayers.length;
+                let playerIndex = (buttonIndex + position) % updatedPlayers.length;
                 updatedPlayers[playerIndex].position = position;
             }
             return updatedPlayers;
@@ -128,8 +128,8 @@ function App() {
     const [actions, setActions] = useState<Action[]>([]);
 
     function download() {
-        const dealerIndex = players.findIndex(player => player.isDealer);
-        const nextPlayerIndex = (dealerIndex + 1) % players.length;
+        const buttonIndex = players.findIndex(player => player.isButton);
+        const nextPlayerIndex = (buttonIndex + 1) % players.length;
 
         // players must be sorted so that the small blind is first
         const sortedPlayers = players.slice(nextPlayerIndex).concat(players.slice(0, nextPlayerIndex));
@@ -214,7 +214,7 @@ function App() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hole
                         Cards
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dealer</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Button</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
                 </thead>
@@ -268,11 +268,11 @@ function App() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <button
-                                className={`w-6 h-6 text-xs flex items-center justify-center hover:bg-green-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 ${player.isDealer ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-gray-200 text-gray-400'} rounded-full`}
+                                className={`w-6 h-6 text-xs flex items-center justify-center hover:bg-green-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 ${player.isButton ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-gray-200 text-gray-400'} rounded-full`}
                                 tabIndex={-1}
-                                aria-pressed={player.isDealer}
-                                aria-label={`Set ${player.name} as dealer`}
-                                onClick={() => setDealer(player.id)}>
+                                aria-pressed={player.isButton}
+                                aria-label={`Set ${player.name} as button`}
+                                onClick={() => setButton(player.id)}>
                                 D
                             </button>
                         </td>
@@ -301,10 +301,10 @@ function App() {
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-200 disabled:text-gray-400 disabled:cursor-not-allowed"
                 onClick={() => {
                     download();
-                    // move dealer button
-                    const currentDealerIndex = players.findIndex(player => player.isDealer);
-                    const nextDealerIndex = (currentDealerIndex + 1) % players.length;
-                    setDealer(players[nextDealerIndex].id);
+                    // move button
+                    const currentButtonIndex = players.findIndex(player => player.isButton);
+                    const nextButtonIndex = (currentButtonIndex + 1) % players.length;
+                    setButton(players[nextButtonIndex].id);
 
                     setPlayersModified(true);
                     setPlayers((players) => (players.map(player => ({
