@@ -407,13 +407,6 @@ function Actions(
                         onCardsUpdate={(cards) => setCurrentShowdownCards(cards)}
                     />
                 )}
-
-                {/* Put the actions above the input boxes so they wander downwards as we add new actions
-			add new actions automatically once exiting the last input that is required
-			place an undo button next to the previous action and support Ctrl+Z (later maybe redo) -> should set previous currentActor and undo any effects
-			add a study button next to the previous and all other actions that can be studied -> user could use shift-tab to access that button
-			possibly rename that button to 'Edit Answer' -> within add a delete answer (don't study this spot).
-  */}
             </div>
             <div className="flex space-x-4 mt-3">
                 <Button
