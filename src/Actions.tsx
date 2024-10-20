@@ -1,10 +1,23 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Actor, DEALER, getDisplayName, isPlayer, Player} from './Player';
-import Action from "./Action.ts";
+import Action, {BetRaiseAction, DealBoardAction} from "./Action.ts";
 
-import {Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions} from '@headlessui/react';
+import {
+    Button,
+    Combobox,
+    ComboboxButton,
+    ComboboxInput,
+    ComboboxOption,
+    ComboboxOptions,
+    Input
+} from '@headlessui/react';
 import clsx from "clsx";
 import {CheckIcon, ChevronDownIcon} from "@heroicons/react/20/solid";
+import {CardInput} from "./CardInput.tsx";
+import Card from "./Card.ts";
+
+const playerActions = ['fold', 'check/call', 'bet/raise to', 'muck cards', 'show cards'];
+const dealerActions = ['deal board'];
 
 function Actions(
     props: Readonly<{
@@ -15,26 +28,46 @@ function Actions(
     }>
 ) {
     const [currentActor, setCurrentActor] = useState<Actor>(props.players[0]);
-
-    const [query, setQuery] = useState('')
+    const [currentAction, setCurrentAction] = useState<string>(playerActions[0]);
+    const [currentBetAmount, setCurrentBetAmount] = useState<number>(0);
+    const [currentBoard, setCurrentBoard] = useState<Card[]>([new Card('?', '?'), new Card('?', '?'), new Card('?', '?')]);
+    const [actorQuery, setActorQuery] = useState('')
+    const [actionQuery, setActionQuery] = useState('')
+    const [focusNextAction, setFocusNextAction] = useState(false);
 
     const filteredPlayers: Actor[] =
-        query === ''
+        actorQuery === ''
             ? (props.players.filter((p) => p.isActive) as Actor[]).concat(DEALER)
             : (props.players.filter((p) => p.isActive) as Actor[]).concat(DEALER).filter((actor) => {
-                const queryLower = query.toLowerCase();
+                const queryLower = actorQuery.toLowerCase();
                 return actor.name.toLowerCase().includes(queryLower) ||
                     (isPlayer(actor) && `p${actor.position}`.includes(queryLower))
             })
 
+    function filterActions(actions: string[], query: string): string[] {
+        return query === '' ? actions : actions.filter((action) => action.toLowerCase().includes(query.toLowerCase()));
+    }
 
-    const handleFold = (playerId: string) => {
-        props.updatePlayer(playerId, {isActive: false});
-        const player = props.players.find(p => p.id === playerId);
-        if (!player) {
-            return;
+    const filteredActions: string[] =
+        isPlayer(currentActor)
+            ? filterActions(playerActions, actionQuery)
+            : filterActions(dealerActions, actionQuery);
+
+    // update currentAction when currentActor changes
+    useEffect(() => {
+        if (isPlayer(currentActor)) {
+            setCurrentAction(playerActions[0]);
+        } else {
+            setCurrentAction(dealerActions[0]);
         }
-        props.appendAction(new Action(player, "folds"));
+    }, [currentActor]);
+
+    const handlePlayerAction = (action: Action) => {
+        const playerId = action.actor.id;
+        if (action.action === 'fold') {
+            props.updatePlayer(playerId, {isActive: false});
+        }
+        props.appendAction(action);
 
         // Set the next actor
         const currentIndex = filteredPlayers.findIndex(p => p.id === playerId);
@@ -51,6 +84,19 @@ function Actions(
 
     return (
         <>
+            <h3 className="text-lg font-medium mb-2 text-left">Actions</h3>
+            <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
+                {props.actions.map((action) => (
+                    <div key={action.id}>
+                        <p>
+                            <span className="font-bold">
+                                {getDisplayName(action.actor)}
+                            </span>
+                            <span className="ml-1">{action.toString()}</span>
+                        </p>
+                    </div>
+                ))}
+            </div>
             <h3 className="text-lg font-medium mb-2 text-left">Next Action</h3>
             <div className="flex space-x-4">
                 <Combobox<Actor>
@@ -60,7 +106,8 @@ function Actions(
                             actor && setCurrentActor(actor);
                         }}
                     value={currentActor}
-                    onClose={() => setQuery('')}
+                    key={currentActor.id}
+                    onClose={() => setActorQuery('')}
                 >
                     <div className="relative">
                         <ComboboxInput
@@ -70,7 +117,13 @@ function Actions(
                                 'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
                                 'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
                             )}
-                            onChange={(event) => setQuery(event.target.value)}
+                            onChange={(event) => setActorQuery(event.target.value)}
+                            ref={(el) => {
+                                if (el && focusNextAction) {
+                                    el.focus();
+                                    el.select();
+                                }
+                            }}
                         />
                         <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
                             <ChevronDownIcon className="size-4 fill-gray-600 group-data-[hover]:fill-black"/>
@@ -96,35 +149,104 @@ function Actions(
                         ))}
                     </ComboboxOptions>
                 </Combobox>
+                <Combobox<string>
+                    immediate
+                    onChange={
+                        (action) => {
+                            action && setCurrentAction(action);
+                        }}
+                    value={currentAction}
+                    key={currentAction}
+                    onClose={() => setActionQuery('')}
+                >
+                    <div className="relative">
+                        <ComboboxInput
+                            placeholder="Choose an action"
+                            className={clsx(
+                                'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
+                                'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+                            )}
+                            onChange={(event) => setActionQuery(event.target.value)}
+                        />
+                        <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
+                            <ChevronDownIcon className="size-4 fill-gray-600 group-data-[hover]:fill-black"/>
+                        </ComboboxButton>
+                    </div>
+                    <ComboboxOptions
+                        anchor="bottom"
+                        transition
+                        className={clsx(
+                            'w-[var(--input-width)] rounded-xl border border-gray-300 bg-gray-100 p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
+                            'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
+                        )}
+                    >
+                        {filteredActions.map(action => (
+                            <ComboboxOption
+                                key={action}
+                                value={action}
+                                className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-gray-200"
+                            >
+                                <CheckIcon className="invisible size-4 fill-gray-600 group-data-[selected]:visible"/>
+                                <div className="text-sm/6 text-black">{action}</div>
+                            </ComboboxOption>
+                        ))}
+                    </ComboboxOptions>
+                </Combobox>
+                {(currentAction == 'bet/raise to') && (
+                    <Input
+                        type="number"
+                        min={0}
+                        className="w-30 rounded-lg border-none bg-gray-100 py-1.5 pr-3 pl-3 text-sm/6 text-black"
+                        placeholder="Amount"
+                        onBlur={(event) => setCurrentBetAmount(Number(event.target.value))}
+                    />
+                )}
+                {(currentAction == 'deal board') && (
+                    <CardInput
+                        cards={currentBoard}
+                        onCardsUpdate={(cards) => setCurrentBoard(cards)}
+                    />
+                )}
+
+                {/* Put the actions above the input boxes so they wander downwards as we add new actions
+			add new actions automatically once exiting the last input that is required
+			place an undo button next to the previous action and support Ctrl+Z (later maybe redo) -> should set previous currentActor and undo any effects
+			add a study button next to the previous and all other actions that can be studied -> user could use shift-tab to access that button
+			possibly rename that button to 'Edit Answer' -> within add a delete answer (don't study this spot).
+  */}
             </div>
-            <div className="flex space-x-4">
-                <button
+            <div className="flex space-x-4 mt-3">
+                <Button
                     onClick={() => {
                         if (currentActor === null) {
                             return;
                         }
                         if (isPlayer(currentActor)) {
-                            handleFold(currentActor.id);
+                            let action: Action;
+                            if (currentAction === 'bet/raise to') {
+                                action = new BetRaiseAction(currentActor, currentBetAmount);
+                            } else {
+                                action = new Action(currentActor, currentAction);
+                            }
+                            handlePlayerAction(action);
+                        } else {
+                            if (currentAction === 'deal board') {
+                                props.appendAction(new DealBoardAction(DEALER, currentBoard));
+                                setCurrentActor(props.players[0] || DEALER);
+                            }
                         }
+                        setFocusNextAction(true);
                     }}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
                 >
-                    Fold
-                </button>
-            </div>
-
-            <h3 className="text-lg font-medium mb-2 text-left">Action History</h3>
-            <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
-                {props.actions.map((action) => (
-                    <div key={action.id}>
-                        <p>
-                            <span className="font-bold">
-                                {getDisplayName(action.actor)}
-                            </span>
-                            <span className="ml-1">{action.action}</span>
-                        </p>
-                    </div>
-                ))}
+                    Submit
+                </Button>
+                <Button
+                    disabled={true}
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Study
+                </Button>
             </div>
         </>
     );
