@@ -26,6 +26,13 @@ function SearchableCombobox(
     const [query, setQuery] = useState('');
     const [selectedOptionKey, setSelectedOptionKey] = useState(props.selectedOptionKey);
 
+    // Ensure the selected option is updated when it is changed externally
+    const [prevSelectedOptionKey, setPrevSelectedOptionKey] = useState<string | null>(null);
+    if (props.selectedOptionKey !== prevSelectedOptionKey) {
+        setSelectedOptionKey(props.selectedOptionKey);
+        setPrevSelectedOptionKey(props.selectedOptionKey);
+    }
+
     const filteredOptions = props.options.filter(option =>
         option.value.toLowerCase().includes(query.toLowerCase())
     );
