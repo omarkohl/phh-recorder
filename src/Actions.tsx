@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Actor, DEALER, getDisplayName, isPlayer, Player} from './Player';
 import Action, {BetRaiseAction, CheckCallAction, DealBoardAction, FoldAction} from "./Action.ts";
 
@@ -36,6 +36,8 @@ function Actions(
     const [actionQuery, setActionQuery] = useState('')
     const [focusNextAction, setFocusNextAction] = useState(false);
 
+    const nextActorInputRef = useRef<HTMLInputElement | null>(null);
+
     const filteredPlayers: Actor[] =
         actorQuery === ''
             ? (props.players.filter((p) => p.isActive) as Actor[]).concat(DEALER)
@@ -69,6 +71,14 @@ function Actions(
             setCurrentAction(dealerActions[0]);
         }
     }, [currentActorId]);
+
+    useEffect(() => {
+        if (focusNextAction && nextActorInputRef.current) {
+            nextActorInputRef.current.focus();
+            nextActorInputRef.current.select();
+            setFocusNextAction(false); // Reset the focus flag
+        }
+    }, [focusNextAction]);
 
     const handlePlayerAction = (action: Action) => {
         const playerId = action.actor.id;
@@ -122,12 +132,7 @@ function Actions(
                                 'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
                             )}
                             onChange={(event) => setActorQuery(event.target.value)}
-                            ref={(el) => {
-                                if (el && focusNextAction) {
-                                    el.focus();
-                                    el.select();
-                                }
-                            }}
+                            ref={nextActorInputRef}
                         />
                         <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
                             <ChevronDownIcon className="size-4 fill-gray-600 group-data-[hover]:fill-black"/>
