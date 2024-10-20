@@ -134,6 +134,9 @@ function App() {
         // players must be sorted so that the small blind is first
         const sortedPlayers = players.slice(nextPlayerIndex).concat(players.slice(0, nextPlayerIndex));
 
+        const phhActions = sortedPlayers.map(player => `d dh p${player.position} ` + player.cards.map(card => card.toString()).join(''));
+        phhActions.push(... actions.map((a) => a.toPHH()))
+
         // Convert game state to TOML
         const gameData = {
             variant: 'NT',
@@ -142,7 +145,7 @@ function App() {
             blinds_or_straddles: sortedPlayers.map((_, index) => blinds[index] || 0),
             min_bet: blinds[blinds.length - 1],
             starting_stacks: sortedPlayers.map(player => player.initialStack),
-            actions: sortedPlayers.map(player => `d dh p${player.position} ` + player.cards.map(card => card.toString()).join('')),
+            actions: phhActions,
             players: sortedPlayers.map(player => player.name),
         };
         const tomlString = stringify(gameData) + '\n';

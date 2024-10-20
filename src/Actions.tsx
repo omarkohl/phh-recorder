@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {Actor, DEALER, getDisplayName, isPlayer, Player} from './Player';
-import Action, {BetRaiseAction, DealBoardAction} from "./Action.ts";
+import Action, {BetRaiseAction, CheckCallAction, DealBoardAction, FoldAction} from "./Action.ts";
 
 import {
     Button,
@@ -64,7 +64,7 @@ function Actions(
 
     const handlePlayerAction = (action: Action) => {
         const playerId = action.actor.id;
-        if (action.action === 'fold') {
+        if (action instanceof FoldAction) {
             props.updatePlayer(playerId, {isActive: false});
         }
         props.appendAction(action);
@@ -223,17 +223,26 @@ function Actions(
                         }
                         if (isPlayer(currentActor)) {
                             let action: Action;
-                            if (currentAction === 'bet/raise to') {
-                                action = new BetRaiseAction(currentActor, currentBetAmount);
-                            } else {
-                                action = new Action(currentActor, currentAction);
+                            switch (currentAction) {
+                                case 'bet/raise to':
+                                    action = new BetRaiseAction(currentActor, currentBetAmount);
+                                    break;
+                                case 'fold':
+                                    action = new FoldAction(currentActor);
+                                    break;
+                                case 'check/call':
+                                    action = new CheckCallAction(currentActor);
+                                    break;
+                                default:
+                                    throw new Error(`invalid currentAction ${currentAction}`)
                             }
                             handlePlayerAction(action);
                         } else {
-                            if (currentAction === 'deal board') {
-                                props.appendAction(new DealBoardAction(DEALER, currentBoard));
-                                setCurrentActor(props.players[0] || DEALER);
+                            if (currentAction !== 'deal board') {
+                                throw new Error(`invalid currentAction ${currentAction}`)
                             }
+                            props.appendAction(new DealBoardAction(DEALER, currentBoard));
+                            setCurrentActor(props.players[0] || DEALER);
                         }
                         setFocusNextAction(true);
                     }}
