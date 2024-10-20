@@ -1,6 +1,13 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {Actor, DEALER, getDisplayName, isPlayer, Player} from './Player';
-import Action, {BetRaiseAction, CheckCallAction, DealBoardAction, FoldAction} from "./Action.ts";
+import Action, {
+    BetRaiseAction,
+    CheckCallAction,
+    DealBoardAction,
+    FoldAction,
+    MuckAction,
+    ShowAction
+} from "./Action.ts";
 
 import {
     Button,
@@ -63,6 +70,7 @@ function Actions(
     const [currentAction, setCurrentAction] = useState<string>(playerActions[0]);
     const [currentBetAmount, setCurrentBetAmount] = useState<number>(0);
     const [currentBoard, setCurrentBoard] = useState<Card[]>([new Card('?', '?'), new Card('?', '?'), new Card('?', '?')]);
+    const [currentShowdownCards, setCurrentShowdownCards] = useState<Card[]>([new Card('?', '?'), new Card('?', '?')]);
     const [actorQuery, setActorQuery] = useState('')
     const [actionQuery, setActionQuery] = useState('')
     const [focusNextAction, setFocusNextAction] = useState(false);
@@ -116,8 +124,10 @@ function Actions(
 
     const handlePlayerAction = (action: Action) => {
         const playerId = action.actorId;
-        if (action instanceof FoldAction) {
+        if (action instanceof FoldAction || action instanceof MuckAction) {
             props.updatePlayer(playerId, {isActive: false});
+        } else if (action instanceof ShowAction) {
+            setCurrentShowdownCards([new Card('?', '?'), new Card('?', '?')]);
         }
         props.appendAction(action);
 
@@ -198,6 +208,19 @@ function Actions(
                         currentActor.position,
                         studySpot,
                         studySpotAnswer,
+                    );
+                    break;
+                case PlayerAction.MuckCards:
+                    action = new MuckAction(
+                        currentActor.id,
+                        currentActor.position,
+                    );
+                    break;
+                case PlayerAction.ShowCards:
+                    action = new ShowAction(
+                        currentActor.id,
+                        currentActor.position,
+                        currentShowdownCards,
                     );
                     break;
                 default:
@@ -376,6 +399,12 @@ function Actions(
                     <CardInput
                         cards={currentBoard}
                         onCardsUpdate={(cards) => setCurrentBoard(cards)}
+                    />
+                )}
+                {(currentAction == 'show cards') && (
+                    <CardInput
+                        cards={isPlayer(findActorById(currentActorId)) ? (findActorById(currentActorId) as Player).cards : currentShowdownCards}
+                        onCardsUpdate={(cards) => setCurrentShowdownCards(cards)}
                     />
                 )}
 

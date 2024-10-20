@@ -101,6 +101,42 @@ export class CheckCallAction extends Action {
     }
 }
 
+export class MuckAction extends Action {
+    public readonly playerPosition: number;
+
+    constructor(actorId: string, position: number) {
+        super(actorId);
+        this.playerPosition = position;
+    }
+
+    toString() {
+        return "muck";
+    }
+
+    toPHH(): string {
+        return `p${this.playerPosition} sm`;
+    }
+}
+
+export class ShowAction extends Action {
+    public readonly playerPosition: number;
+    public readonly cards: Card[];
+
+    constructor(actorId: string, position: number, cards: Card[]) {
+        super(actorId);
+        this.playerPosition = position;
+        this.cards = [...cards];
+    }
+
+    toString() {
+        return `show ${this.cards}`;
+    }
+
+    toPHH(): string {
+        return `p${this.playerPosition} sm ${this.cards.map((c) => c.toString()).join('')}`;
+    }
+}
+
 export class DealBoardAction extends Action {
     public readonly board: Card[];
 
