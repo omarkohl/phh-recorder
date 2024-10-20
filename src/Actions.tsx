@@ -17,8 +17,17 @@ import {CardInput} from "./CardInput.tsx";
 import Card from "./Card.ts";
 import StudyModal from "./StudyModal.tsx";
 
-const playerActions = ['fold', 'check/call', 'bet/raise to', 'muck cards', 'show cards'];
-const dealerActions = ['deal board'];
+enum PlayerAction {
+    Fold = 'fold',
+    CheckCall = 'check/call',
+    BetRaise = 'bet/raise to',
+    MuckCards = 'muck cards',
+    ShowCards = 'show cards'
+}
+
+enum DealerAction {
+    DealBoard = 'deal board'
+}
 
 enum Street {
     PREFLOP,
@@ -26,6 +35,18 @@ enum Street {
     TURN,
     RIVER
 }
+
+const playerActions = [
+    PlayerAction.Fold,
+    PlayerAction.CheckCall,
+    PlayerAction.BetRaise,
+    PlayerAction.MuckCards,
+    PlayerAction.ShowCards
+];
+
+const dealerActions = [
+    DealerAction.DealBoard
+];
 
 function Actions(
     props: Readonly<{
@@ -154,7 +175,7 @@ function Actions(
         if (isPlayer(currentActor)) {
             let action: Action;
             switch (currentAction) {
-                case 'bet/raise to':
+                case PlayerAction.BetRaise:
                     action = new BetRaiseAction(
                         currentActor.id,
                         currentActor.position,
@@ -163,7 +184,7 @@ function Actions(
                         studySpotAnswer,
                     );
                     break;
-                case 'fold':
+                case PlayerAction.Fold:
                     action = new FoldAction(
                         currentActor.id,
                         currentActor.position,
@@ -171,7 +192,7 @@ function Actions(
                         studySpotAnswer,
                     );
                     break;
-                case 'check/call':
+                case PlayerAction.CheckCall:
                     action = new CheckCallAction(
                         currentActor.id,
                         currentActor.position,
@@ -185,7 +206,7 @@ function Actions(
             handlePlayerAction(action);
         } else {
             let action: Action;
-            if (currentAction === 'deal board') {
+            if (currentAction === DealerAction.DealBoard) {
                 action = new DealBoardAction(DEALER.id, [...currentBoard]);
             } else {
                 throw new Error(`invalid currentAction ${currentAction}`)
