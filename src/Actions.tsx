@@ -19,6 +19,13 @@ import Card from "./Card.ts";
 const playerActions = ['fold', 'check/call', 'bet/raise to', 'muck cards', 'show cards'];
 const dealerActions = ['deal board'];
 
+enum Street {
+    PREFLOP,
+    FLOP,
+    TURN,
+    RIVER
+}
+
 function Actions(
     props: Readonly<{
         players: Player[],
@@ -35,6 +42,7 @@ function Actions(
     const [actorQuery, setActorQuery] = useState('')
     const [actionQuery, setActionQuery] = useState('')
     const [focusNextAction, setFocusNextAction] = useState(false);
+    const [, setCurrentStreet] = useState<Street>(Street.PREFLOP);
 
     const nextActorInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -84,6 +92,32 @@ function Actions(
         const playerId = action.actor.id;
         if (action instanceof FoldAction) {
             props.updatePlayer(playerId, {isActive: false});
+        } else if (playerId === DEALER.id && action instanceof DealBoardAction) {
+            // This is only called when the dealer deals the board i.e. when
+            // the street has already ended, therefore the below code might
+            // be a little confusing.
+            setCurrentStreet((lastStreet) => {
+                // Prepare the board for the next street that will be dealt
+                // after all the actions to come and return the street that
+                // we are now on.
+
+                if (lastStreet === Street.PREFLOP) {
+                    // Prepare board for the turn
+                    setCurrentBoard([new Card('?', '?')]);
+                    return Street.FLOP;
+                } else if (lastStreet === Street.FLOP) {
+                    // Prepare board for the river
+                    setCurrentBoard([new Card('?', '?')]);
+                    return Street.TURN;
+                } else if (lastStreet === Street.TURN) {
+                    // Prepare the board for the next hand (preflop)
+                    setCurrentBoard([new Card('?', '?'), new Card('?', '?'), new Card('?', '?')]);
+                    return Street.PREFLOP;
+                } else {
+                    // We never deal the board after the river
+                    throw new Error(`invalid street ${lastStreet}`);
+                }
+            })
         }
         props.appendAction(action);
 
