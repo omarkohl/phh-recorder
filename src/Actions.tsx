@@ -242,7 +242,7 @@ function Actions(
                                 throw new Error(`invalid currentAction ${currentAction}`)
                             }
                             props.appendAction(new DealBoardAction(DEALER, currentBoard));
-                            setCurrentActor(props.players[0] || DEALER);
+                            setCurrentActor(filteredPlayers[0] || DEALER);
                         }
                         setFocusNextAction(true);
                     }}
