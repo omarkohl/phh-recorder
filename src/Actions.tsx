@@ -157,7 +157,6 @@ function Actions(
                     immediate
                     onChange={(action) => action && setCurrentAction(action)}
                     value={currentAction}
-                    key={currentAction}
                     onClose={() => setActionQuery('')}
                 >
                     <div className="relative">
