@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {Actor, DEALER, getDisplayName, isPlayer, Player} from './Player';
 import Action, {BetRaiseAction, CheckCallAction, DealBoardAction, FoldAction} from "./Action.ts";
 
@@ -51,12 +51,12 @@ function Actions(
         return query === '' ? actions : actions.filter((action) => action.toLowerCase().includes(query.toLowerCase()));
     }
 
-    const findActorById = (id: string): Actor => {
+    const findActorById = useCallback((id: string): Actor => {
         if (id === DEALER.id) {
             return DEALER;
         }
         return props.players.find(player => player.id === id) as Actor;
-    }
+    }, [props.players]);
 
     const filteredActions: string[] =
         isPlayer(findActorById(currentActorId))
@@ -70,7 +70,7 @@ function Actions(
         } else {
             setCurrentAction(dealerActions[0]);
         }
-    }, [currentActorId]);
+    }, [currentActorId, findActorById]);
 
     useEffect(() => {
         if (focusNextAction && nextActorInputRef.current) {
