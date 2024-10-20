@@ -8,6 +8,7 @@ import BlindsInput from "./BlindsInput.tsx";
 import Actions from "./Actions.tsx";
 import {Player} from "./Player.ts";
 import Action from "./Action.ts";
+import SearchableCombobox from "./SearchableCombobox.tsx";
 
 function App() {
     const [players, setPlayers] = useState<Player[]>([
@@ -45,6 +46,7 @@ function App() {
 
     const [blinds, setBlinds] = useState<number[]>([]);
     const [playersModified, setPlayersModified] = useState(false);
+    const [heroPlayerId, setHeroPlayerId] = useState<string>(players[0].id);
 
     // Set initial stack sizes based on the big blind.
     // This effect runs only once when blinds are set and players have not
@@ -106,6 +108,13 @@ function App() {
             updatedPlayers[nextButtonIndex].isButton = true;
             buttonIndex = nextButtonIndex;
         }
+
+        let heroPlayerIndex = updatedPlayers.findIndex(player => player.id === heroPlayerId);
+        if (id === heroPlayerId) {
+            heroPlayerIndex = (heroPlayerIndex + 1) % updatedPlayers.length;
+            setHeroPlayerId(updatedPlayers[heroPlayerIndex].id);
+        }
+
         updatedPlayers = updatedPlayers.filter(player => player.id !== id);
 
         for (let position = 1; position <= updatedPlayers.length; position++) {
@@ -141,7 +150,7 @@ function App() {
         const sortedPlayers = players.slice(nextPlayerIndex).concat(players.slice(0, nextPlayerIndex));
 
         const phhActions = sortedPlayers.map(player => `d dh p${player.position} ` + player.cards.map(card => card.toString()).join(''));
-        phhActions.push(... actions.map((a) => a.toPHH()))
+        phhActions.push(...actions.map((a) => a.toPHH()))
 
         // Convert game state to TOML
         const gameData = {
@@ -299,6 +308,20 @@ function App() {
                 ))}
                 </tbody>
             </table>
+
+            <div className="mb-8">
+                <h3 className="text-lg font-medium mb-2 text-left">Hero Player</h3>
+                <div className="flex space-x-4">
+                    <SearchableCombobox
+                        options={players.map(player => ({
+                            key: player.id,
+                            value: player.name + ` (p${player.position})`
+                        }))}
+                        selectedOptionKey={heroPlayerId}
+                        onOptionSelect={setHeroPlayerId}
+                    />
+                </div>
+            </div>
 
             <Actions players={players} updatePlayer={
                 (id: string, updates) => updatePlayer(id, updates)
