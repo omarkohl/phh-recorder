@@ -155,10 +155,7 @@ function Actions(
                 </Combobox>
                 <Combobox<string>
                     immediate
-                    onChange={
-                        (action) => {
-                            action && setCurrentAction(action);
-                        }}
+                    onChange={(action) => action && setCurrentAction(action)}
                     value={currentAction}
                     key={currentAction}
                     onClose={() => setActionQuery('')}
