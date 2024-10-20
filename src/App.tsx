@@ -1,6 +1,6 @@
 import {stringify} from "smol-toml";
 
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import './App.css';
 import {CardInput} from "./CardInput.tsx";
 import Card from "./Card.ts";
@@ -47,6 +47,7 @@ function App() {
     const [blinds, setBlinds] = useState<number[]>([]);
     const [playersModified, setPlayersModified] = useState(false);
     const [heroPlayerId, setHeroPlayerId] = useState<string>(players[0].id);
+    const [heroSelectorError, setHeroSelectorError] = useState<string | undefined>();
 
     // Set initial stack sizes based on the big blind.
     // This effect runs only once when blinds are set and players have not
@@ -174,6 +175,23 @@ function App() {
         a.click();
         URL.revokeObjectURL(url);
     }
+
+    const findPlayerById = useCallback((id: string): Player => {
+        const player = players.find(player => player.id === id);
+        if (!player) {
+            throw new Error(`Player with id ${id} not found`);
+        }
+        return player;
+    }, [players]);
+
+    useEffect(() => {
+        const hero = findPlayerById(heroPlayerId);
+        if (hero && hero.cards.some(card => card.rank === '?' || card.suit === '?')) {
+            setHeroSelectorError("The hole cards of the hero need to be known.");
+        } else {
+            setHeroSelectorError(undefined);
+        }
+    }, [heroPlayerId, findPlayerById]);
 
     return (
         <div className="container mx-auto p-4">
@@ -319,6 +337,7 @@ function App() {
                         }))}
                         selectedOptionKey={heroPlayerId}
                         onOptionSelect={setHeroPlayerId}
+                        error={heroSelectorError}
                     />
                 </div>
             </div>
