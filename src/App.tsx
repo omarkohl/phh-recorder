@@ -163,6 +163,7 @@ function App() {
             starting_stacks: sortedPlayers.map(player => player.initialStack),
             actions: phhActions,
             players: sortedPlayers.map(player => player.name),
+            _apm_hero: findPlayerById(heroPlayerId).position,
         };
         const tomlString = stringify(gameData) + '\n';
 
