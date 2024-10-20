@@ -164,6 +164,10 @@ function App() {
             actions: phhActions,
             players: sortedPlayers.map(player => player.name),
             _apm_hero: findPlayerById(heroPlayerId).position,
+            _apm_context: '',
+            _apm_notes: '',
+            _apm_source: '',
+            _apm_answers: [],
         };
         const tomlString = stringify(gameData) + '\n';
 
