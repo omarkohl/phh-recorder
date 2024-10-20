@@ -169,7 +169,7 @@ function App() {
             _apm_context: context,
             _apm_notes: notes,
             _apm_source: source,
-            _apm_answers: [],
+            _apm_answers: actions.filter(a => a.getIsStudySpot()).map(a => a.getAnswer()),
         };
         const tomlString = stringify(gameData) + '\n';
 

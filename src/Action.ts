@@ -60,7 +60,8 @@ export class BetRaiseAction extends Action {
     }
 
     toPHH(): string {
-        return `p${this.playerPosition} cbr ${this.amount}`;
+        return `p${this.playerPosition} cbr ${this.amount}` +
+            (this.getIsStudySpot() ? " # apm study" : "");
     }
 }
 
@@ -77,7 +78,8 @@ export class FoldAction extends Action {
     }
 
     toPHH(): string {
-        return `p${this.playerPosition} f`;
+        return `p${this.playerPosition} f` +
+            (this.getIsStudySpot() ? " # apm study" : "");
     }
 }
 
@@ -94,7 +96,8 @@ export class CheckCallAction extends Action {
     }
 
     toPHH(): string {
-        return `p${this.playerPosition} cc`;
+        return `p${this.playerPosition} cc` +
+            (this.getIsStudySpot() ? " # apm study" : "");
     }
 }
 
