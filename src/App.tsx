@@ -52,11 +52,13 @@ function App() {
     useEffect(() => {
         if (!playersModified && blinds.length > 0) {
             const bigBlind = blinds[blinds.length - 1];
-            setPlayers(players.map(player => ({
-                ...player,
-                initialStack: 100 * bigBlind,
-                stack: 100 * bigBlind
-            })));
+            setPlayers(players =>
+                players.map(player => ({
+                    ...player,
+                    initialStack: 100 * bigBlind,
+                    stack: 100 * bigBlind
+                }))
+            );
         }
     }, [blinds, playersModified]);
 
@@ -83,7 +85,11 @@ function App() {
 
     const updatePlayer = (id: string, updatedPlayer: Partial<Player>) => {
         setPlayersModified(true);
-        setPlayers(players.map(player => player.id === id ? {...player, ...updatedPlayer} : player));
+        setPlayers((players) =>
+            players.map(p =>
+                p.id === id ? {...p, ...updatedPlayer} : p
+            )
+        );
     };
 
     const removePlayer = (id: string) => {
