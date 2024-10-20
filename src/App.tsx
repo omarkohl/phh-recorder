@@ -6,7 +6,7 @@ import {CardInput} from "./CardInput.tsx";
 import Card from "./Card.ts";
 import BlindsInput from "./BlindsInput.tsx";
 import Actions from "./Actions.tsx";
-import {Player} from "./Player.ts";
+import {getDisplayName, Player} from "./Player.ts";
 import Action from "./Action.ts";
 import SearchableCombobox from "./SearchableCombobox.tsx";
 
@@ -333,7 +333,7 @@ function App() {
                     <SearchableCombobox
                         options={players.map(player => ({
                             key: player.id,
-                            value: player.name + ` (p${player.position})`
+                            value: getDisplayName(player),
                         }))}
                         selectedOptionKey={heroPlayerId}
                         onOptionSelect={setHeroPlayerId}
@@ -348,7 +348,7 @@ function App() {
                     <SearchableCombobox
                         options={players.map(player => ({
                             key: player.id,
-                            value: player.name + ` (p${player.position})`
+                            value: getDisplayName(player),
                         }))}
                         selectedOptionKey={players.find(player => player.isButton)?.id || null}
                         onOptionSelect={(id) => setButton(id)}
