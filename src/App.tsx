@@ -309,10 +309,10 @@ function App() {
                     setPlayersModified(true);
                     setPlayers((players) => (players.map(player => ({
                         ...player,
-                        cards: [new Card('?', '?'), new Card('?', '?')]
+                        cards: [new Card('?', '?'), new Card('?', '?')],
+                        isActive: true,
                     }))));
-
-                    // TODO reset action history
+                    setActions([]);
                 }}
                 disabled={players.length <= 2 || blinds.length === 0}
             >
@@ -328,7 +328,11 @@ function App() {
             <button
                 className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                 onClick={() => {
-                    // TODO reset action history
+                    setPlayers((players) => (players.map(player => ({
+                        ...player,
+                        isActive: true,
+                    }))));
+                    setActions([]);
                 }}
             >
                 Clear Actions
