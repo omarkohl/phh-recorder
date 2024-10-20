@@ -27,7 +27,8 @@ function Actions(
         appendAction: (action: Action) => void
     }>
 ) {
-    const [currentActor, setCurrentActor] = useState<Actor>(props.players[0]);
+//    const [currentActor, setCurrentActor] = useState<Actor>(props.players[0]);
+    const [currentActorId, setCurrentActorId] = useState<string>(props.players[0].id);
     const [currentAction, setCurrentAction] = useState<string>(playerActions[0]);
     const [currentBetAmount, setCurrentBetAmount] = useState<number>(0);
     const [currentBoard, setCurrentBoard] = useState<Card[]>([new Card('?', '?'), new Card('?', '?'), new Card('?', '?')]);
@@ -48,19 +49,26 @@ function Actions(
         return query === '' ? actions : actions.filter((action) => action.toLowerCase().includes(query.toLowerCase()));
     }
 
+    const findActorById = (id: string): Actor => {
+        if (id === DEALER.id) {
+            return DEALER;
+        }
+        return props.players.find(player => player.id === id) as Actor;
+    }
+
     const filteredActions: string[] =
-        isPlayer(currentActor)
+        isPlayer(findActorById(currentActorId))
             ? filterActions(playerActions, actionQuery)
             : filterActions(dealerActions, actionQuery);
 
     // update currentAction when currentActor changes
     useEffect(() => {
-        if (isPlayer(currentActor)) {
+        if (isPlayer(findActorById(currentActorId))) {
             setCurrentAction(playerActions[0]);
         } else {
             setCurrentAction(dealerActions[0]);
         }
-    }, [currentActor]);
+    }, [currentActorId]);
 
     const handlePlayerAction = (action: Action) => {
         const playerId = action.actor.id;
@@ -79,7 +87,7 @@ function Actions(
                 break;
             }
         }
-        setCurrentActor(nextPlayer || DEALER);
+        setCurrentActorId(nextPlayer?.id ?? DEALER.id);
     };
 
     return (
@@ -99,20 +107,16 @@ function Actions(
             </div>
             <h3 className="text-lg font-medium mb-2 text-left">Next Action</h3>
             <div className="flex space-x-4">
-                <Combobox<Actor>
+                <Combobox<string>
                     immediate
-                    onChange={
-                        (actor) => {
-                            actor && setCurrentActor(actor);
-                        }}
-                    value={currentActor}
-                    key={currentActor.id}
+                    onChange={v => v && setCurrentActorId(v)}
+                    value={currentActorId}
                     onClose={() => setActorQuery('')}
                 >
                     <div className="relative">
                         <ComboboxInput
                             placeholder="Choose an actor"
-                            displayValue={getDisplayName}
+                            displayValue={(actorId: string) => findActorById(actorId) && getDisplayName(findActorById(actorId))}
                             className={clsx(
                                 'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
                                 'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
@@ -140,7 +144,7 @@ function Actions(
                         {filteredPlayers.map(player => (
                             <ComboboxOption
                                 key={player.id}
-                                value={player}
+                                value={player.id}
                                 className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-gray-200"
                             >
                                 <CheckIcon className="invisible size-4 fill-gray-600 group-data-[selected]:visible"/>
@@ -218,6 +222,7 @@ function Actions(
             <div className="flex space-x-4 mt-3">
                 <Button
                     onClick={() => {
+                        const currentActor = findActorById(currentActorId);
                         if (currentActor === null) {
                             return;
                         }
@@ -242,7 +247,7 @@ function Actions(
                                 throw new Error(`invalid currentAction ${currentAction}`)
                             }
                             props.appendAction(new DealBoardAction(DEALER, currentBoard));
-                            setCurrentActor(filteredPlayers[0] || DEALER);
+                            setCurrentActorId(filteredPlayers[0].id ?? DEALER.id);
                         }
                         setFocusNextAction(true);
                     }}
