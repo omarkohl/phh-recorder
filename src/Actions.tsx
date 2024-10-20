@@ -15,6 +15,7 @@ import clsx from "clsx";
 import {CheckIcon, ChevronDownIcon} from "@heroicons/react/20/solid";
 import {CardInput} from "./CardInput.tsx";
 import Card from "./Card.ts";
+import StudyModal from "./StudyModal.tsx";
 
 const playerActions = ['fold', 'check/call', 'bet/raise to', 'muck cards', 'show cards'];
 const dealerActions = ['deal board'];
@@ -32,6 +33,7 @@ function Actions(
         updatePlayer: (id: string, updates: Partial<Player>) => void,
         actions: Action[],
         appendAction: (action: Action) => void,
+        updateActionAnswer: (id: string, answer: string) => void,
         heroId: string,
     }>
 ) {
@@ -44,6 +46,8 @@ function Actions(
     const [actionQuery, setActionQuery] = useState('')
     const [focusNextAction, setFocusNextAction] = useState(false);
     const [, setCurrentStreet] = useState<Street>(Street.PREFLOP);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [studyModalActionId, setStudyModalActionId] = useState<string | null>(null);
 
     const nextActorInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -142,7 +146,7 @@ function Actions(
         setCurrentActorId(filteredPlayers[0].id ?? DEALER.id);
     };
 
-    const handleAction = (studySpot: boolean) => {
+    const handleAction = (studySpot: boolean, studySpotAnswer: string) => {
         const currentActor = findActorById(currentActorId);
         if (currentActor === null) {
             return;
@@ -156,6 +160,7 @@ function Actions(
                         currentActor.position,
                         currentBetAmount,
                         studySpot,
+                        studySpotAnswer,
                     );
                     break;
                 case 'fold':
@@ -163,6 +168,7 @@ function Actions(
                         currentActor.id,
                         currentActor.position,
                         studySpot,
+                        studySpotAnswer,
                     );
                     break;
                 case 'check/call':
@@ -170,6 +176,7 @@ function Actions(
                         currentActor.id,
                         currentActor.position,
                         studySpot,
+                        studySpotAnswer,
                     );
                     break;
                 default:
@@ -188,17 +195,67 @@ function Actions(
         setFocusNextAction(true);
     }
 
+    const handleStudyModalSubmit = (answer: string) => {
+        setIsModalOpen(false);
+        if (studyModalActionId === null) {
+            // new study spot
+            handleAction(true, answer);
+            return
+        }
+        // edit existing study spot
+        const action = props.actions.find(action => action.id === studyModalActionId);
+        if (action) {
+            props.updateActionAnswer(action.id, answer);
+        }
+    };
+
     return (
         <>
+            <StudyModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleStudyModalSubmit}
+                answer={props.actions.find(action => action.id === studyModalActionId)?.getAnswer() ?? ''}
+            />
             <h3 className="text-lg font-medium mb-2 text-left">Actions</h3>
             <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
                 {props.actions.map((action) => (
-                    <div key={action.id}>
+                    <div key={action.id} className="mt-1">
                         <p>
                             <span className="font-bold">
                                 {getDisplayName(findActorById(action.actorId))}
                             </span>
                             <span className="ml-1">{action.toString()}</span>
+                            {action.getIsStudySpot() && action.getAnswer() && (
+                                <span className="ml-4 text-gray-500">
+                                {action.getAnswer().length > 20
+                                    ? `${action.getAnswer().substring(0, 20)}...`
+                                    : action.getAnswer()
+                                }
+                            </span>
+                            )}
+                            {!action.getIsStudySpot() && action.actorId === props.heroId && (
+                                <button
+                                    className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                                    onClick={() => {
+                                        setStudyModalActionId(action.id);
+                                        setIsModalOpen(true);
+                                    }}
+                                >
+                                    Study
+                                </button>
+                            )}
+                            {action.getIsStudySpot() && (
+                                <button
+                                    className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                                    onClick={() => {
+                                        setStudyModalActionId(action.id);
+                                        setIsModalOpen(true);
+                                    }}
+                                >
+                                    Edit Answer
+                                </button>
+                            )}
                         </p>
                     </div>
                 ))}
@@ -310,14 +367,17 @@ function Actions(
             </div>
             <div className="flex space-x-4 mt-3">
                 <Button
-                    onClick={() => handleAction(false)}
+                    onClick={() => handleAction(false, '')}
                     className="bg-blue-500 text-white px-4 py-2 rounded-md"
                 >
                     Submit
                 </Button>
                 <Button
                     disabled={currentActorId !== props.heroId}
-                    onClick={() => handleAction(true)}
+                    onClick={() => {
+                        setIsModalOpen(true)
+                        setStudyModalActionId(null)
+                    }}
                     className="bg-yellow-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     Study

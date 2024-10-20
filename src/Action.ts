@@ -4,8 +4,8 @@ import Card from "./Card.ts";
 class Action {
     public readonly id: string;
     public readonly actorId: string;
-    public readonly isStudySpot: boolean;
-    public readonly studySpotAnswer: string;
+    private isStudySpot: boolean;
+    private studySpotAnswer: string;
 
     constructor(actorId: string, isStudySpot?: boolean, studySpotAnswer?: string) {
         this.id = crypto.randomUUID();
@@ -20,6 +20,28 @@ class Action {
 
     toPHH(): string {
         return ""
+    }
+
+    /*
+        * Set the answer for a study spot action. It also sets the isStudySpot flag to true.
+        * @param {string} answer - The answer to the study spot
+        * @return {void}
+     */
+    setAnswer(answer: string) {
+        this.studySpotAnswer = answer;
+        this.isStudySpot = true;
+    }
+
+    getAnswer() {
+        return this.studySpotAnswer;
+    }
+
+    getIsStudySpot() {
+        return this.isStudySpot;
+    }
+
+    setIsStudySpot(isStudySpot: boolean) {
+        this.isStudySpot = isStudySpot;
     }
 }
 

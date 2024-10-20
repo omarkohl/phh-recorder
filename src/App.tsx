@@ -393,6 +393,18 @@ function App() {
                 appendAction={
                     (action: Action) => setActions([...actions, action])
                 }
+                updateActionAnswer={
+                    (id: string, answer: string) => setActions(
+                        actions.map(
+                            action => {
+                                if (action.id === id) {
+                                    action.setAnswer(answer);
+                                }
+                                return action;
+                            }
+                        )
+                    )
+                }
                 heroId={heroPlayerId}
             />
 
