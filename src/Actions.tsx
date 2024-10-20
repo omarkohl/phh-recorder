@@ -92,7 +92,24 @@ function Actions(
         const playerId = action.actor.id;
         if (action instanceof FoldAction) {
             props.updatePlayer(playerId, {isActive: false});
-        } else if (playerId === DEALER.id && action instanceof DealBoardAction) {
+        }
+        props.appendAction(action);
+
+        // Set the next actor
+        const currentIndex = filteredPlayers.findIndex(p => p.id === playerId);
+        let nextPlayer: Actor | null = null;
+        for (let i = 0; i < filteredPlayers.length; i++) {
+            const candidate = filteredPlayers[(currentIndex + i + 1) % filteredPlayers.length];
+            if (candidate.id !== playerId && candidate !== DEALER) {
+                nextPlayer = candidate;
+                break;
+            }
+        }
+        setCurrentActorId(nextPlayer?.id ?? DEALER.id);
+    };
+
+    const handleDealerAction = (action: Action) => {
+        if (action instanceof DealBoardAction) {
             // This is only called when the dealer deals the board i.e. when
             // the street has already ended, therefore the below code might
             // be a little confusing.
@@ -119,19 +136,9 @@ function Actions(
                 }
             })
         }
-        props.appendAction(action);
 
-        // Set the next actor
-        const currentIndex = filteredPlayers.findIndex(p => p.id === playerId);
-        let nextPlayer: Actor | null = null;
-        for (let i = 0; i < filteredPlayers.length; i++) {
-            const candidate = filteredPlayers[(currentIndex + i + 1) % filteredPlayers.length];
-            if (candidate.id !== playerId && candidate !== DEALER) {
-                nextPlayer = candidate;
-                break;
-            }
-        }
-        setCurrentActorId(nextPlayer?.id ?? DEALER.id);
+        props.appendAction(action);
+        setCurrentActorId(filteredPlayers[0].id ?? DEALER.id);
     };
 
     return (
@@ -278,11 +285,13 @@ function Actions(
                             }
                             handlePlayerAction(action);
                         } else {
-                            if (currentAction !== 'deal board') {
+                            let action: Action;
+                            if (currentAction === 'deal board') {
+                                action = new DealBoardAction(DEALER, [...currentBoard]);
+                            } else {
                                 throw new Error(`invalid currentAction ${currentAction}`)
                             }
-                            props.appendAction(new DealBoardAction(DEALER, currentBoard));
-                            setCurrentActorId(filteredPlayers[0].id ?? DEALER.id);
+                            handleDealerAction(action);
                         }
                         setFocusNextAction(true);
                     }}
