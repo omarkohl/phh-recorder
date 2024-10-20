@@ -47,7 +47,6 @@ function App() {
     const [blinds, setBlinds] = useState<number[]>([]);
     const [playersModified, setPlayersModified] = useState(false);
     const [heroPlayerId, setHeroPlayerId] = useState<string>(players[0].id);
-    const [heroSelectorError, setHeroSelectorError] = useState<string | undefined>();
 
     // Set initial stack sizes based on the big blind.
     // This effect runs only once when blinds are set and players have not
@@ -189,14 +188,10 @@ function App() {
         return player;
     }, [players]);
 
-    useEffect(() => {
-        const hero = findPlayerById(heroPlayerId);
-        if (hero && hero.cards.some(card => card.rank === '?' || card.suit === '?')) {
-            setHeroSelectorError("The hole cards of the hero need to be known.");
-        } else {
-            setHeroSelectorError(undefined);
-        }
-    }, [heroPlayerId, findPlayerById]);
+    const heroSelectorError =
+        findPlayerById(heroPlayerId)?.cards.some(card => card.rank === '?' || card.suit === '?')
+            ? "The hole cards of the hero need to be known."
+            : undefined;
 
     return (
         <div className="container mx-auto p-4">
