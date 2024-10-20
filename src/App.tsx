@@ -77,7 +77,7 @@ function App() {
         };
         const updatedPlayers = [...players, newPlayer];
         for (let position = 1; position <= updatedPlayers.length; position++) {
-            let playerIndex = (buttonIndex + position) % updatedPlayers.length;
+            const playerIndex = (buttonIndex + position) % updatedPlayers.length;
             updatedPlayers[playerIndex].position = position;
         }
         setPlayers(updatedPlayers);
@@ -109,7 +109,7 @@ function App() {
         updatedPlayers = updatedPlayers.filter(player => player.id !== id);
 
         for (let position = 1; position <= updatedPlayers.length; position++) {
-            let playerIndex = (buttonIndex + position) % updatedPlayers.length;
+            const playerIndex = (buttonIndex + position) % updatedPlayers.length;
             updatedPlayers[playerIndex].position = position;
         }
         setPlayers(updatedPlayers);
@@ -124,7 +124,7 @@ function App() {
             }));
             const buttonIndex = updatedPlayers.findIndex(player => player.isButton);
             for (let position = 1; position <= updatedPlayers.length; position++) {
-                let playerIndex = (buttonIndex + position) % updatedPlayers.length;
+                const playerIndex = (buttonIndex + position) % updatedPlayers.length;
                 updatedPlayers[playerIndex].position = position;
             }
             return updatedPlayers;
