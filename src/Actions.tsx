@@ -89,7 +89,7 @@ function Actions(
     }, [focusNextAction]);
 
     const handlePlayerAction = (action: Action) => {
-        const playerId = action.actor.id;
+        const playerId = action.actorId;
         if (action instanceof FoldAction) {
             props.updatePlayer(playerId, {isActive: false});
         }
@@ -149,7 +149,7 @@ function Actions(
                     <div key={action.id}>
                         <p>
                             <span className="font-bold">
-                                {getDisplayName(action.actor)}
+                                {getDisplayName(findActorById(action.actorId))}
                             </span>
                             <span className="ml-1">{action.toString()}</span>
                         </p>
@@ -272,13 +272,23 @@ function Actions(
                             let action: Action;
                             switch (currentAction) {
                                 case 'bet/raise to':
-                                    action = new BetRaiseAction(currentActor, currentBetAmount);
+                                    action = new BetRaiseAction(
+                                        currentActor.id,
+                                        currentActor.position,
+                                        currentBetAmount,
+                                    );
                                     break;
                                 case 'fold':
-                                    action = new FoldAction(currentActor);
+                                    action = new FoldAction(
+                                        currentActor.id,
+                                        currentActor.position,
+                                    );
                                     break;
                                 case 'check/call':
-                                    action = new CheckCallAction(currentActor);
+                                    action = new CheckCallAction(
+                                        currentActor.id,
+                                        currentActor.position,
+                                    );
                                     break;
                                 default:
                                     throw new Error(`invalid currentAction ${currentAction}`)
@@ -287,7 +297,7 @@ function Actions(
                         } else {
                             let action: Action;
                             if (currentAction === 'deal board') {
-                                action = new DealBoardAction(DEALER, [...currentBoard]);
+                                action = new DealBoardAction(DEALER.id, [...currentBoard]);
                             } else {
                                 throw new Error(`invalid currentAction ${currentAction}`)
                             }

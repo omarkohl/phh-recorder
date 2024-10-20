@@ -1,14 +1,13 @@
-import {Actor, isPlayer, Player} from "./Player.ts";
 import Card from "./Card.ts";
 
 
 class Action {
     public readonly id: string;
-    public readonly actor: Actor;
+    public readonly actorId: string;
 
-    constructor(actor: Actor) {
+    constructor(actorId: string) {
         this.id = crypto.randomUUID();
-        this.actor = actor;
+        this.actorId = actorId;
     }
 
     toString() {
@@ -22,13 +21,12 @@ class Action {
 
 export class BetRaiseAction extends Action {
     public readonly amount: number;
+    public readonly playerPosition: number;
 
-    constructor(actor: Actor, amount: number) {
-        if (!isPlayer(actor)) {
-            throw new Error(`${actor.name} must be a player`)
-        }
-        super(actor);
+    constructor(actorId: string, position: number, amount: number) {
+        super(actorId);
         this.amount = amount;
+        this.playerPosition = position;
     }
 
     toString() {
@@ -36,17 +34,16 @@ export class BetRaiseAction extends Action {
     }
 
     toPHH(): string {
-        const player = this.actor as Player;
-        return `p${player.position} cbr ${this.amount}`;
+        return `p${this.playerPosition} cbr ${this.amount}`;
     }
 }
 
 export class FoldAction extends Action {
-    constructor(actor: Actor) {
-        if (!isPlayer(actor)) {
-            throw new Error(`${actor.name} must be a player`)
-        }
-        super(actor);
+    public readonly playerPosition: number;
+
+    constructor(actorId: string, position: number) {
+        super(actorId);
+        this.playerPosition = position;
     }
 
     toString() {
@@ -54,17 +51,16 @@ export class FoldAction extends Action {
     }
 
     toPHH(): string {
-        const player = this.actor as Player;
-        return `p${player.position} f`;
+        return `p${this.playerPosition} f`;
     }
 }
 
 export class CheckCallAction extends Action {
-    constructor(actor: Actor) {
-        if (!isPlayer(actor)) {
-            throw new Error(`${actor.name} must be a player`)
-        }
-        super(actor);
+    public readonly playerPosition: number;
+
+    constructor(actorId: string, position: number) {
+        super(actorId);
+        this.playerPosition = position
     }
 
     toString() {
@@ -72,19 +68,15 @@ export class CheckCallAction extends Action {
     }
 
     toPHH(): string {
-        const player = this.actor as Player;
-        return `p${player.position} cc`;
+        return `p${this.playerPosition} cc`;
     }
 }
 
 export class DealBoardAction extends Action {
     public readonly board: Card[];
 
-    constructor(actor: Actor, board: Card[]) {
-        if (isPlayer(actor)) {
-            throw new Error(`${actor.name} must be the dealer`)
-        }
-        super(actor);
+    constructor(actorId: string, board: Card[]) {
+        super(actorId);
         this.board = board;
     }
 
