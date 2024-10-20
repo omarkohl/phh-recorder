@@ -342,6 +342,20 @@ function App() {
                 </div>
             </div>
 
+            <div className="mb-8">
+                <h3 className="text-lg font-medium mb-2 text-left">Button</h3>
+                <div className="flex space-x-4">
+                    <SearchableCombobox
+                        options={players.map(player => ({
+                            key: player.id,
+                            value: player.name + ` (p${player.position})`
+                        }))}
+                        selectedOptionKey={players.find(player => player.isButton)?.id || null}
+                        onOptionSelect={(id) => setButton(id)}
+                    />
+                </div>
+            </div>
+
             <Actions players={players} updatePlayer={
                 (id: string, updates) => updatePlayer(id, updates)
             } actions={actions} appendAction={
