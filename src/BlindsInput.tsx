@@ -47,6 +47,7 @@ function BlindsInput({ initialBlinds, onBlindsChange }: Readonly<BlindsInputProp
                     setInputValue(e.target.value);
                     handleBlindsChange(e.target.value);
                 }}
+                autoFocus
             />
             {error && <p className="mt-2 text-sm text-red-600 text-left">{error}</p>}
         </>
