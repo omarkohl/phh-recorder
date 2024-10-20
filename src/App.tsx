@@ -47,6 +47,9 @@ function App() {
     const [blinds, setBlinds] = useState<number[]>([]);
     const [playersModified, setPlayersModified] = useState(false);
     const [heroPlayerId, setHeroPlayerId] = useState<string>(players[0].id);
+    const [context, setContext] = useState<string>('');
+    const [notes, setNotes] = useState<string>('');
+    const [source, setSource] = useState<string>('');
 
     // Set initial stack sizes based on the big blind.
     // This effect runs only once when blinds are set and players have not
@@ -163,9 +166,9 @@ function App() {
             actions: phhActions,
             players: sortedPlayers.map(player => player.name),
             _apm_hero: findPlayerById(heroPlayerId).position,
-            _apm_context: '',
-            _apm_notes: '',
-            _apm_source: '',
+            _apm_context: context,
+            _apm_notes: notes,
+            _apm_source: source,
             _apm_answers: [],
         };
         const tomlString = stringify(gameData) + '\n';
@@ -218,6 +221,31 @@ function App() {
                 <input type="text" id="straddles"
                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                        placeholder="Enter straddles (e.g. 4, 8)"/>
+            </div>
+
+            <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2 text-left">Context</h3>
+                <textarea
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                    value={context}
+                    onChange={(e) => setContext(e.target.value)}
+                />
+            </div>
+            <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2 text-left">Notes</h3>
+                <textarea
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                />
+            </div>
+            <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2 text-left">Source</h3>
+                <textarea
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                    value={source}
+                    onChange={(e) => setSource(e.target.value)}
+                />
             </div>
 
             <div className="text-right">
