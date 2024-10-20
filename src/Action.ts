@@ -4,10 +4,14 @@ import Card from "./Card.ts";
 class Action {
     public readonly id: string;
     public readonly actorId: string;
+    public readonly isStudySpot: boolean;
+    public readonly studySpotAnswer: string;
 
-    constructor(actorId: string) {
+    constructor(actorId: string, isStudySpot?: boolean, studySpotAnswer?: string) {
         this.id = crypto.randomUUID();
         this.actorId = actorId;
+        this.isStudySpot = isStudySpot ?? false;
+        this.studySpotAnswer = studySpotAnswer ?? "";
     }
 
     toString() {
@@ -23,8 +27,8 @@ export class BetRaiseAction extends Action {
     public readonly amount: number;
     public readonly playerPosition: number;
 
-    constructor(actorId: string, position: number, amount: number) {
-        super(actorId);
+    constructor(actorId: string, position: number, amount: number, isStudySpot?: boolean, studySpotAnswer?: string) {
+        super(actorId, isStudySpot, studySpotAnswer);
         this.amount = amount;
         this.playerPosition = position;
     }
@@ -41,8 +45,8 @@ export class BetRaiseAction extends Action {
 export class FoldAction extends Action {
     public readonly playerPosition: number;
 
-    constructor(actorId: string, position: number) {
-        super(actorId);
+    constructor(actorId: string, position: number, isStudySpot?: boolean, studySpotAnswer?: string) {
+        super(actorId, isStudySpot, studySpotAnswer);
         this.playerPosition = position;
     }
 
@@ -58,8 +62,8 @@ export class FoldAction extends Action {
 export class CheckCallAction extends Action {
     public readonly playerPosition: number;
 
-    constructor(actorId: string, position: number) {
-        super(actorId);
+    constructor(actorId: string, position: number, isStudySpot?: boolean, studySpotAnswer?: string) {
+        super(actorId, isStudySpot, studySpotAnswer);
         this.playerPosition = position
     }
 

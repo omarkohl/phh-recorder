@@ -31,7 +31,8 @@ function Actions(
         players: Player[],
         updatePlayer: (id: string, updates: Partial<Player>) => void,
         actions: Action[],
-        appendAction: (action: Action) => void
+        appendAction: (action: Action) => void,
+        heroId: string,
     }>
 ) {
 //    const [currentActor, setCurrentActor] = useState<Actor>(props.players[0]);
@@ -140,6 +141,52 @@ function Actions(
         props.appendAction(action);
         setCurrentActorId(filteredPlayers[0].id ?? DEALER.id);
     };
+
+    const handleAction = (studySpot: boolean) => {
+        const currentActor = findActorById(currentActorId);
+        if (currentActor === null) {
+            return;
+        }
+        if (isPlayer(currentActor)) {
+            let action: Action;
+            switch (currentAction) {
+                case 'bet/raise to':
+                    action = new BetRaiseAction(
+                        currentActor.id,
+                        currentActor.position,
+                        currentBetAmount,
+                        studySpot,
+                    );
+                    break;
+                case 'fold':
+                    action = new FoldAction(
+                        currentActor.id,
+                        currentActor.position,
+                        studySpot,
+                    );
+                    break;
+                case 'check/call':
+                    action = new CheckCallAction(
+                        currentActor.id,
+                        currentActor.position,
+                        studySpot,
+                    );
+                    break;
+                default:
+                    throw new Error(`invalid currentAction ${currentAction}`)
+            }
+            handlePlayerAction(action);
+        } else {
+            let action: Action;
+            if (currentAction === 'deal board') {
+                action = new DealBoardAction(DEALER.id, [...currentBoard]);
+            } else {
+                throw new Error(`invalid currentAction ${currentAction}`)
+            }
+            handleDealerAction(action);
+        }
+        setFocusNextAction(true);
+    }
 
     return (
         <>
@@ -263,54 +310,14 @@ function Actions(
             </div>
             <div className="flex space-x-4 mt-3">
                 <Button
-                    onClick={() => {
-                        const currentActor = findActorById(currentActorId);
-                        if (currentActor === null) {
-                            return;
-                        }
-                        if (isPlayer(currentActor)) {
-                            let action: Action;
-                            switch (currentAction) {
-                                case 'bet/raise to':
-                                    action = new BetRaiseAction(
-                                        currentActor.id,
-                                        currentActor.position,
-                                        currentBetAmount,
-                                    );
-                                    break;
-                                case 'fold':
-                                    action = new FoldAction(
-                                        currentActor.id,
-                                        currentActor.position,
-                                    );
-                                    break;
-                                case 'check/call':
-                                    action = new CheckCallAction(
-                                        currentActor.id,
-                                        currentActor.position,
-                                    );
-                                    break;
-                                default:
-                                    throw new Error(`invalid currentAction ${currentAction}`)
-                            }
-                            handlePlayerAction(action);
-                        } else {
-                            let action: Action;
-                            if (currentAction === 'deal board') {
-                                action = new DealBoardAction(DEALER.id, [...currentBoard]);
-                            } else {
-                                throw new Error(`invalid currentAction ${currentAction}`)
-                            }
-                            handleDealerAction(action);
-                        }
-                        setFocusNextAction(true);
-                    }}
+                    onClick={() => handleAction(false)}
                     className="bg-blue-500 text-white px-4 py-2 rounded-md"
                 >
                     Submit
                 </Button>
                 <Button
-                    disabled={true}
+                    disabled={currentActorId !== props.heroId}
+                    onClick={() => handleAction(true)}
                     className="bg-yellow-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     Study

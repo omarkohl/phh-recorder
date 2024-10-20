@@ -384,11 +384,17 @@ function App() {
                 </div>
             </div>
 
-            <Actions players={players} updatePlayer={
-                (id: string, updates) => updatePlayer(id, updates)
-            } actions={actions} appendAction={
-                (action: Action) => setActions([...actions, action])
-            }/>
+            <Actions
+                players={players}
+                updatePlayer={
+                    (id: string, updates) => updatePlayer(id, updates)
+                }
+                actions={actions}
+                appendAction={
+                    (action: Action) => setActions([...actions, action])
+                }
+                heroId={heroPlayerId}
+            />
 
             <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-200 disabled:text-gray-400 disabled:cursor-not-allowed"
