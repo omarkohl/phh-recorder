@@ -278,17 +278,25 @@ function Actions(
                                 }
                             </span>
                             )}
-                            {!action.getIsStudySpot() && action.actorId === props.heroId && (
-                                <button
-                                    className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
-                                    onClick={() => {
-                                        setStudyModalActionId(action.id);
-                                        setIsModalOpen(true);
-                                    }}
-                                >
-                                    Study
-                                </button>
-                            )}
+                            {!action.getIsStudySpot() &&
+                                action.actorId === props.heroId &&
+                                (
+                                    action instanceof BetRaiseAction ||
+                                    action instanceof CheckCallAction ||
+                                    action instanceof FoldAction
+                                ) &&
+                                (
+                                    <button
+                                        className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                                        onClick={() => {
+                                            setStudyModalActionId(action.id);
+                                            setIsModalOpen(true);
+                                        }}
+                                    >
+                                        Study
+                                    </button>
+                                )
+                            }
                             {action.getIsStudySpot() && (
                                 <button
                                     className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
@@ -416,7 +424,10 @@ function Actions(
                     Submit
                 </Button>
                 <Button
-                    disabled={currentActorId !== props.heroId}
+                    disabled={
+                        currentActorId !== props.heroId ||
+                        ![PlayerAction.CheckCall, PlayerAction.BetRaise, PlayerAction.Fold].includes(currentAction as PlayerAction)
+                    }
                     onClick={() => {
                         setIsModalOpen(true)
                         setStudyModalActionId(null)
