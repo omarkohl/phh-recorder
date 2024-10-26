@@ -234,59 +234,6 @@ function Actions(
                 answer={props.actions.find(action => action.id === studyModalActionId)?.getAnswer() ?? ''}
             />
             <div className="mb-4">
-                <h3 className="text-lg font-medium mb-2 text-left">Actions</h3>
-                <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
-                    {props.actions.map((action) => (
-                        <div key={action.id} className="mt-1">
-                            <p>
-                            <span className="font-bold">
-                                {getDisplayName(findActorById(action.actorId))}
-                            </span>
-                                <span className="ml-1">{action.toString()}</span>
-                                {action.getIsStudySpot() && action.getAnswer() && (
-                                    <span className="ml-4 text-gray-500">
-                                {action.getAnswer().length > 20
-                                    ? `${action.getAnswer().substring(0, 20)}...`
-                                    : action.getAnswer()
-                                }
-                            </span>
-                                )}
-                                {!action.getIsStudySpot() &&
-                                    action.actorId === props.heroId &&
-                                    (
-                                        action instanceof BetRaiseAction ||
-                                        action instanceof CheckCallAction ||
-                                        action instanceof FoldAction
-                                    ) &&
-                                    (
-                                        <button
-                                            className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
-                                            onClick={() => {
-                                                setStudyModalActionId(action.id);
-                                                setIsModalOpen(true);
-                                            }}
-                                        >
-                                            Study
-                                        </button>
-                                    )
-                                }
-                                {action.getIsStudySpot() && (
-                                    <button
-                                        className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
-                                        onClick={() => {
-                                            setStudyModalActionId(action.id);
-                                            setIsModalOpen(true);
-                                        }}
-                                    >
-                                        Edit Answer
-                                    </button>
-                                )}
-                            </p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Next Action</h3>
                 <div className="flex space-x-4">
                     <Combobox<string>
@@ -394,7 +341,7 @@ function Actions(
                     )}
                 </div>
             </div>
-            <div className="flex space-x-4 mt-3">
+            <div className="flex space-x-4 mt-3 mb-8">
                 <Button
                     onClick={() => handleAction(false, '')}
                     className="bg-blue-500 text-white px-4 py-2 rounded-md"
@@ -414,6 +361,59 @@ function Actions(
                 >
                     Study
                 </Button>
+            </div>
+            <div>
+                <h3 className="text-lg font-medium mb-2 text-left">Action History</h3>
+                <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
+                    {props.actions.map((action) => (
+                        <div key={action.id} className="mt-1">
+                            <p>
+                            <span className="font-bold">
+                                {getDisplayName(findActorById(action.actorId))}
+                            </span>
+                                <span className="ml-1">{action.toString()}</span>
+                                {action.getIsStudySpot() && action.getAnswer() && (
+                                    <span className="ml-4 text-gray-500">
+                                {action.getAnswer().length > 20
+                                    ? `${action.getAnswer().substring(0, 20)}...`
+                                    : action.getAnswer()
+                                }
+                            </span>
+                                )}
+                                {!action.getIsStudySpot() &&
+                                    action.actorId === props.heroId &&
+                                    (
+                                        action instanceof BetRaiseAction ||
+                                        action instanceof CheckCallAction ||
+                                        action instanceof FoldAction
+                                    ) &&
+                                    (
+                                        <button
+                                            className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                                            onClick={() => {
+                                                setStudyModalActionId(action.id);
+                                                setIsModalOpen(true);
+                                            }}
+                                        >
+                                            Study
+                                        </button>
+                                    )
+                                }
+                                {action.getIsStudySpot() && (
+                                    <button
+                                        className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                                        onClick={() => {
+                                            setStudyModalActionId(action.id);
+                                            setIsModalOpen(true);
+                                        }}
+                                    >
+                                        Edit Answer
+                                    </button>
+                                )}
+                            </p>
+                        </div>
+                    ))}
+                </div>
             </div>
         </>
     );
