@@ -36,13 +36,6 @@ enum DealerAction {
     DealBoard = 'deal board'
 }
 
-enum Street {
-    PREFLOP,
-    FLOP,
-    TURN,
-    RIVER
-}
-
 const playerActions = [
     PlayerAction.Fold,
     PlayerAction.CheckCall,
@@ -74,11 +67,18 @@ function Actions(
     const [actorQuery, setActorQuery] = useState('')
     const [actionQuery, setActionQuery] = useState('')
     const [focusNextAction, setFocusNextAction] = useState(false);
-    const [, setCurrentStreet] = useState<Street>(Street.PREFLOP);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [studyModalActionId, setStudyModalActionId] = useState<string | null>(null);
 
     const nextActorInputRef = useRef<HTMLInputElement | null>(null);
+
+    useEffect(() => {
+        setCurrentBoard(
+            props.actions.filter(action => action instanceof DealBoardAction).length === 0
+                ? [new Card('?', '?'), new Card('?', '?'), new Card('?', '?')]
+                : [new Card('?', '?')]
+        );
+    }, [props.actions]);
 
     const filteredPlayers: Actor[] =
         actorQuery === ''
@@ -145,34 +145,6 @@ function Actions(
     };
 
     const handleDealerAction = (action: Action) => {
-        if (action instanceof DealBoardAction) {
-            // This is only called when the dealer deals the board i.e. when
-            // the street has already ended, therefore the below code might
-            // be a little confusing.
-            setCurrentStreet((lastStreet) => {
-                // Prepare the board for the next street that will be dealt
-                // after all the actions to come and return the street that
-                // we are now on.
-
-                if (lastStreet === Street.PREFLOP) {
-                    // Prepare board for the turn
-                    setCurrentBoard([new Card('?', '?')]);
-                    return Street.FLOP;
-                } else if (lastStreet === Street.FLOP) {
-                    // Prepare board for the river
-                    setCurrentBoard([new Card('?', '?')]);
-                    return Street.TURN;
-                } else if (lastStreet === Street.TURN) {
-                    // Prepare the board for the next hand (preflop)
-                    setCurrentBoard([new Card('?', '?'), new Card('?', '?'), new Card('?', '?')]);
-                    return Street.PREFLOP;
-                } else {
-                    // We never deal the board after the river
-                    throw new Error(`invalid street ${lastStreet}`);
-                }
-            })
-        }
-
         props.appendAction(action);
         setCurrentActorId(filteredPlayers[0].id ?? DEALER.id);
     };
