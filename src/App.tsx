@@ -203,9 +203,11 @@ function App() {
             </div>
 
             <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2 text-left">Blinds</h3>
                 <BlindsInput initialBlinds={blinds} onBlindsChange={setBlinds}/>
-
-                <label htmlFor="ante" className="block text-sm font-medium text-gray-700 mt-4">Ante</label>
+            </div>
+            <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2 text-left">Ante</h3>
                 <input type="text" id="ante"
                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                        placeholder="Enter ante (e.g. 0.5)"/>
@@ -216,8 +218,9 @@ function App() {
                     <label htmlFor="ante-per-round" className="ml-2 block text-sm text-gray-900">Ante collected once per
                         round</label>
                 </div>
-
-                <label htmlFor="straddles" className="block text-sm font-medium text-gray-700 mt-4">Straddles</label>
+            </div>
+            <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2 text-left">Straddles</h3>
                 <input type="text" id="straddles"
                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                        placeholder="Enter straddles (e.g. 4, 8)"/>

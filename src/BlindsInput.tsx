@@ -36,7 +36,6 @@ function BlindsInput({ initialBlinds, onBlindsChange }: Readonly<BlindsInputProp
 
     return (
         <>
-            <label htmlFor="blinds" className="block text-sm font-medium text-gray-700">Blinds</label>
             <input
                 type="text"
                 id="blinds"

@@ -261,31 +261,44 @@ function Actions(
                 onSubmit={handleStudyModalSubmit}
                 answer={props.actions.find(action => action.id === studyModalActionId)?.getAnswer() ?? ''}
             />
-            <h3 className="text-lg font-medium mb-2 text-left">Actions</h3>
-            <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
-                {props.actions.map((action) => (
-                    <div key={action.id} className="mt-1">
-                        <p>
+            <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2 text-left">Actions</h3>
+                <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
+                    {props.actions.map((action) => (
+                        <div key={action.id} className="mt-1">
+                            <p>
                             <span className="font-bold">
                                 {getDisplayName(findActorById(action.actorId))}
                             </span>
-                            <span className="ml-1">{action.toString()}</span>
-                            {action.getIsStudySpot() && action.getAnswer() && (
-                                <span className="ml-4 text-gray-500">
+                                <span className="ml-1">{action.toString()}</span>
+                                {action.getIsStudySpot() && action.getAnswer() && (
+                                    <span className="ml-4 text-gray-500">
                                 {action.getAnswer().length > 20
                                     ? `${action.getAnswer().substring(0, 20)}...`
                                     : action.getAnswer()
                                 }
                             </span>
-                            )}
-                            {!action.getIsStudySpot() &&
-                                action.actorId === props.heroId &&
-                                (
-                                    action instanceof BetRaiseAction ||
-                                    action instanceof CheckCallAction ||
-                                    action instanceof FoldAction
-                                ) &&
-                                (
+                                )}
+                                {!action.getIsStudySpot() &&
+                                    action.actorId === props.heroId &&
+                                    (
+                                        action instanceof BetRaiseAction ||
+                                        action instanceof CheckCallAction ||
+                                        action instanceof FoldAction
+                                    ) &&
+                                    (
+                                        <button
+                                            className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                                            onClick={() => {
+                                                setStudyModalActionId(action.id);
+                                                setIsModalOpen(true);
+                                            }}
+                                        >
+                                            Study
+                                        </button>
+                                    )
+                                }
+                                {action.getIsStudySpot() && (
                                     <button
                                         className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
                                         onClick={() => {
@@ -293,128 +306,121 @@ function Actions(
                                             setIsModalOpen(true);
                                         }}
                                     >
-                                        Study
+                                        Edit Answer
                                     </button>
-                                )
-                            }
-                            {action.getIsStudySpot() && (
-                                <button
-                                    className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
-                                    onClick={() => {
-                                        setStudyModalActionId(action.id);
-                                        setIsModalOpen(true);
-                                    }}
-                                >
-                                    Edit Answer
-                                </button>
-                            )}
-                        </p>
-                    </div>
-                ))}
+                                )}
+                            </p>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <h3 className="text-lg font-medium mb-2 text-left">Next Action</h3>
-            <div className="flex space-x-4">
-                <Combobox<string>
-                    immediate
-                    onChange={v => v && setCurrentActorId(v)}
-                    value={currentActorId}
-                    onClose={() => setActorQuery('')}
-                >
-                    <div className="relative">
-                        <ComboboxInput
-                            placeholder="Choose an actor"
-                            displayValue={(actorId: string) => findActorById(actorId) && getDisplayName(findActorById(actorId))}
-                            className={clsx(
-                                'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
-                                'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
-                            )}
-                            onChange={(event) => setActorQuery(event.target.value)}
-                            ref={nextActorInputRef}
-                        />
-                        <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
-                            <ChevronDownIcon className="size-4 fill-gray-600 group-data-[hover]:fill-black"/>
-                        </ComboboxButton>
-                    </div>
-                    <ComboboxOptions
-                        anchor="bottom"
-                        transition
-                        className={clsx(
-                            'w-[var(--input-width)] rounded-xl border border-gray-300 bg-gray-100 p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
-                            'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
-                        )}
+            <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2 text-left">Next Action</h3>
+                <div className="flex space-x-4">
+                    <Combobox<string>
+                        immediate
+                        onChange={v => v && setCurrentActorId(v)}
+                        value={currentActorId}
+                        onClose={() => setActorQuery('')}
                     >
-                        {filteredPlayers.map(player => (
-                            <ComboboxOption
-                                key={player.id}
-                                value={player.id}
-                                className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-gray-200"
-                            >
-                                <CheckIcon className="invisible size-4 fill-gray-600 group-data-[selected]:visible"/>
-                                <div className="text-sm/6 text-black">{getDisplayName(player)}</div>
-                            </ComboboxOption>
-                        ))}
-                    </ComboboxOptions>
-                </Combobox>
-                <Combobox<string>
-                    immediate
-                    onChange={(action) => action && setCurrentAction(action)}
-                    value={currentAction}
-                    onClose={() => setActionQuery('')}
-                >
-                    <div className="relative">
-                        <ComboboxInput
-                            placeholder="Choose an action"
+                        <div className="relative">
+                            <ComboboxInput
+                                placeholder="Choose an actor"
+                                displayValue={(actorId: string) => findActorById(actorId) && getDisplayName(findActorById(actorId))}
+                                className={clsx(
+                                    'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
+                                    'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+                                )}
+                                onChange={(event) => setActorQuery(event.target.value)}
+                                ref={nextActorInputRef}
+                            />
+                            <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
+                                <ChevronDownIcon className="size-4 fill-gray-600 group-data-[hover]:fill-black"/>
+                            </ComboboxButton>
+                        </div>
+                        <ComboboxOptions
+                            anchor="bottom"
+                            transition
                             className={clsx(
-                                'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
-                                'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+                                'w-[var(--input-width)] rounded-xl border border-gray-300 bg-gray-100 p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
+                                'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
                             )}
-                            onChange={(event) => setActionQuery(event.target.value)}
-                        />
-                        <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
-                            <ChevronDownIcon className="size-4 fill-gray-600 group-data-[hover]:fill-black"/>
-                        </ComboboxButton>
-                    </div>
-                    <ComboboxOptions
-                        anchor="bottom"
-                        transition
-                        className={clsx(
-                            'w-[var(--input-width)] rounded-xl border border-gray-300 bg-gray-100 p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
-                            'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
-                        )}
+                        >
+                            {filteredPlayers.map(player => (
+                                <ComboboxOption
+                                    key={player.id}
+                                    value={player.id}
+                                    className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-gray-200"
+                                >
+                                    <CheckIcon
+                                        className="invisible size-4 fill-gray-600 group-data-[selected]:visible"/>
+                                    <div className="text-sm/6 text-black">{getDisplayName(player)}</div>
+                                </ComboboxOption>
+                            ))}
+                        </ComboboxOptions>
+                    </Combobox>
+                    <Combobox<string>
+                        immediate
+                        onChange={(action) => action && setCurrentAction(action)}
+                        value={currentAction}
+                        onClose={() => setActionQuery('')}
                     >
-                        {filteredActions.map(action => (
-                            <ComboboxOption
-                                key={action}
-                                value={action}
-                                className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-gray-200"
-                            >
-                                <CheckIcon className="invisible size-4 fill-gray-600 group-data-[selected]:visible"/>
-                                <div className="text-sm/6 text-black">{action}</div>
-                            </ComboboxOption>
-                        ))}
-                    </ComboboxOptions>
-                </Combobox>
-                {(currentAction == 'bet/raise to') && (
-                    <Input
-                        type="number"
-                        min={0}
-                        className="w-30 rounded-lg border-none bg-gray-100 py-1.5 pr-3 pl-3 text-sm/6 text-black"
-                        placeholder="Amount"
-                        onBlur={(event) => setCurrentBetAmount(Number(event.target.value))}
-                    />
-                )}
-                {(currentAction == 'deal board') && (
-                    <CardInput
-                        cards={currentBoard}
-                        onCardsUpdate={(cards) => setCurrentBoard(cards)}
-                    />
-                )}
-                {(currentAction == 'show cards') && (
-                    <CardInput
-                        cards={isPlayer(findActorById(currentActorId)) ? (findActorById(currentActorId) as Player).cards : currentShowdownCards}
-                        onCardsUpdate={(cards) => setCurrentShowdownCards(cards)}
-                    />
-                )}
+                        <div className="relative">
+                            <ComboboxInput
+                                placeholder="Choose an action"
+                                className={clsx(
+                                    'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
+                                    'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+                                )}
+                                onChange={(event) => setActionQuery(event.target.value)}
+                            />
+                            <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
+                                <ChevronDownIcon className="size-4 fill-gray-600 group-data-[hover]:fill-black"/>
+                            </ComboboxButton>
+                        </div>
+                        <ComboboxOptions
+                            anchor="bottom"
+                            transition
+                            className={clsx(
+                                'w-[var(--input-width)] rounded-xl border border-gray-300 bg-gray-100 p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
+                                'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
+                            )}
+                        >
+                            {filteredActions.map(action => (
+                                <ComboboxOption
+                                    key={action}
+                                    value={action}
+                                    className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-gray-200"
+                                >
+                                    <CheckIcon
+                                        className="invisible size-4 fill-gray-600 group-data-[selected]:visible"/>
+                                    <div className="text-sm/6 text-black">{action}</div>
+                                </ComboboxOption>
+                            ))}
+                        </ComboboxOptions>
+                    </Combobox>
+                    {(currentAction == 'bet/raise to') && (
+                        <Input
+                            type="number"
+                            min={0}
+                            className="w-30 rounded-lg border-none bg-gray-100 py-1.5 pr-3 pl-3 text-sm/6 text-black"
+                            placeholder="Amount"
+                            onBlur={(event) => setCurrentBetAmount(Number(event.target.value))}
+                        />
+                    )}
+                    {(currentAction == 'deal board') && (
+                        <CardInput
+                            cards={currentBoard}
+                            onCardsUpdate={(cards) => setCurrentBoard(cards)}
+                        />
+                    )}
+                    {(currentAction == 'show cards') && (
+                        <CardInput
+                            cards={isPlayer(findActorById(currentActorId)) ? (findActorById(currentActorId) as Player).cards : currentShowdownCards}
+                            onCardsUpdate={(cards) => setCurrentShowdownCards(cards)}
+                        />
+                    )}
+                </div>
             </div>
             <div className="flex space-x-4 mt-3">
                 <Button
