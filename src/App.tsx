@@ -242,7 +242,7 @@ function App() {
                     onChange={(e) => setNotes(e.target.value)}
                 />
             </div>
-            <div className="mb-4">
+            <div className="mb-8">
                 <h3 className="text-lg font-medium mb-2 text-left">Source</h3>
                 <textarea
                     className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
@@ -251,7 +251,7 @@ function App() {
                 />
             </div>
 
-            <div className="text-right">
+            <div className="text-left">
                 <button
                     className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                     onClick={() => {
@@ -411,46 +411,48 @@ function App() {
                 heroId={heroPlayerId}
             />
 
-            <button
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-200 disabled:text-gray-400 disabled:cursor-not-allowed"
-                onClick={() => {
-                    download();
-                    // move button
-                    const currentButtonIndex = players.findIndex(player => player.isButton);
-                    const nextButtonIndex = (currentButtonIndex + 1) % players.length;
-                    setButton(players[nextButtonIndex].id);
+            <div className="text-left mt-4">
+                <button
+                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    onClick={() => {
+                        download();
+                        // move button
+                        const currentButtonIndex = players.findIndex(player => player.isButton);
+                        const nextButtonIndex = (currentButtonIndex + 1) % players.length;
+                        setButton(players[nextButtonIndex].id);
 
-                    setPlayersModified(true);
-                    setPlayers((players) => (players.map(player => ({
-                        ...player,
-                        cards: [new Card('?', '?'), new Card('?', '?')],
-                        isActive: true,
-                    }))));
-                    setActions([]);
-                }}
-                disabled={players.length <= 2 || blinds.length === 0}
-            >
-                Download & Continue Game
-            </button>
-            <button
-                className="mt-4 ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                onClick={download}
-                disabled={players.length <= 2 || blinds.length === 0}
-            >
-                Download Only
-            </button>
-            <button
-                className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                onClick={() => {
-                    setPlayers((players) => (players.map(player => ({
-                        ...player,
-                        isActive: true,
-                    }))));
-                    setActions([]);
-                }}
-            >
-                Clear Actions
-            </button>
+                        setPlayersModified(true);
+                        setPlayers((players) => (players.map(player => ({
+                            ...player,
+                            cards: [new Card('?', '?'), new Card('?', '?')],
+                            isActive: true,
+                        }))));
+                        setActions([]);
+                    }}
+                    disabled={players.length <= 2 || blinds.length === 0}
+                >
+                    Download & Continue Game
+                </button>
+                <button
+                    className="mt-4 ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    onClick={download}
+                    disabled={players.length <= 2 || blinds.length === 0}
+                >
+                    Download Only
+                </button>
+                <button
+                    className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                    onClick={() => {
+                        setPlayers((players) => (players.map(player => ({
+                            ...player,
+                            isActive: true,
+                        }))));
+                        setActions([]);
+                    }}
+                >
+                    Clear Actions
+                </button>
+            </div>
         </div>
     );
 }
