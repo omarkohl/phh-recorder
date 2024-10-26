@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle, Input} from "@headlessui/react";
+import {Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle, Input, Button} from "@headlessui/react";
 
 const StudyModal = (
     props: Readonly<{
@@ -27,9 +27,9 @@ const StudyModal = (
         <Dialog open={props.isOpen} onClose={close} className="relative z-50">
             <DialogBackdrop className="fixed inset-0 bg-black/30"/>
             <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-                <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
-                    <DialogTitle className="font-bold">Answer</DialogTitle>
-                    <Description>
+                <DialogPanel className="max-w-lg space-y-4 border bg-white p-12 rounded-lg">
+                    <DialogTitle className="font-bold text-lg">Answer</DialogTitle>
+                    <Description className="text-sm text-gray-600">
                         Describe the correct action in this spot.
                         Leave it empty to default to the action actually taken.
                     </Description>
@@ -38,15 +38,24 @@ const StudyModal = (
                         autoFocus
                         onChange={(e) => setAnswer(e.target.value)}
                         placeholder="Correct action"
+                        className="w-full rounded-lg border-gray-300 p-2 text-sm text-black"
                     />
                     <div className="flex gap-4">
-                        <button onClick={close}>Cancel</button>
-                        <button onClick={() => {
-                            props.onSubmit(answer);
-                            setAnswer('');
-                        }}>
+                        <Button
+                            onClick={close}
+                            className="bg-gray-500 text-white px-4 py-2 rounded-md"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                props.onSubmit(answer);
+                                setAnswer('');
+                            }}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                        >
                             Save
-                        </button>
+                        </Button>
                     </div>
                 </DialogPanel>
             </div>
