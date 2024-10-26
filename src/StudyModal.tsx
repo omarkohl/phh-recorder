@@ -29,9 +29,13 @@ const StudyModal = (
             <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
                 <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
                     <DialogTitle className="font-bold">Answer</DialogTitle>
-                    <Description>Describe the correct action by the hero in this spot.</Description>
+                    <Description>
+                        Describe the correct action in this spot.
+                        Leave it empty to default to the action actually taken.
+                    </Description>
                     <Input
                         value={answer}
+                        autoFocus
                         onChange={(e) => setAnswer(e.target.value)}
                         placeholder="Correct action"
                     />
@@ -40,7 +44,9 @@ const StudyModal = (
                         <button onClick={() => {
                             props.onSubmit(answer);
                             setAnswer('');
-                        }}>Save</button>
+                        }}>
+                            Save
+                        </button>
                     </div>
                 </DialogPanel>
             </div>
