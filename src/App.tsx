@@ -9,6 +9,9 @@ import Actions from "./Actions.tsx";
 import {getDisplayName, Player} from "./Player.ts";
 import Action from "./Action.ts";
 import SearchableCombobox from "./SearchableCombobox.tsx";
+import {Input} from "@headlessui/react";
+
+const DEFAULT_FILE_NAME = 'game.phh';
 
 function App() {
     const [players, setPlayers] = useState<Player[]>([
@@ -50,6 +53,7 @@ function App() {
     const [context, setContext] = useState<string>('');
     const [notes, setNotes] = useState<string>('');
     const [source, setSource] = useState<string>('');
+    const [fileName, setFileName] = useState<string>('');
 
     // Set initial stack sizes based on the big blind.
     // This effect runs only once when blinds are set and players have not
@@ -178,7 +182,10 @@ function App() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'game.phh';
+        a.download = fileName || DEFAULT_FILE_NAME;
+        if (!a.download.endsWith('.phh')) {
+            a.download += '.phh';
+        }
         a.click();
         URL.revokeObjectURL(url);
     }
@@ -411,7 +418,18 @@ function App() {
                 heroId={heroPlayerId}
             />
 
-            <div className="text-left mt-4">
+            <div className="mt-4">
+                <h3 className="text-lg font-medium mb-2 text-left">Download</h3>
+                <Input
+                    type="text"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder={`Enter file name (default: ${DEFAULT_FILE_NAME})`}
+                    value={fileName}
+                    onChange={(e) => setFileName(e.target.value)}
+                />
+            </div>
+
+            <div className="text-left">
                 <button
                     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-200 disabled:text-gray-400 disabled:cursor-not-allowed"
                     onClick={() => {
