@@ -54,7 +54,7 @@ function SearchableCombobox(
                         placeholder="Choose an option"
                         className={clsx(
                             'w-full rounded-lg bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
-                            'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25',
+                            'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-2 data-[focus]:outline-indigo-500',
                             {
                                 "border-red-500 border-2": props.error,
                                 "border-transparent border-2": !props.error

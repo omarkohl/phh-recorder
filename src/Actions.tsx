@@ -248,7 +248,7 @@ function Actions(
                                 displayValue={(actorId: string) => findActorById(actorId) && getDisplayName(findActorById(actorId))}
                                 className={clsx(
                                     'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
-                                    'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+                                    'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-2 data-[focus]:outline-indigo-500'
                                 )}
                                 onChange={(event) => setActorQuery(event.target.value)}
                                 ref={nextActorInputRef}
@@ -288,7 +288,7 @@ function Actions(
                                 placeholder="Choose an action"
                                 className={clsx(
                                     'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
-                                    'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+                                    'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-2 data-[focus]:outline-indigo-500'
                                 )}
                                 onChange={(event) => setActionQuery(event.target.value)}
                             />
@@ -321,7 +321,10 @@ function Actions(
                         <Input
                             type="number"
                             min={0}
-                            className="w-30 rounded-lg border-none bg-gray-100 py-1.5 pr-3 pl-3 text-sm/6 text-black"
+                            className={clsx(
+                                "w-30 rounded-lg border border-transparent bg-gray-100 py-1.5 pr-3 pl-3 text-sm/6 text-black",
+                                "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:cursor-text"
+                            )}
                             placeholder="Amount"
                             onBlur={(event) => setCurrentBetAmount(Number(event.target.value))}
                         />
