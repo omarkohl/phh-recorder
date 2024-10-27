@@ -342,10 +342,25 @@ function App() {
                                     onChange={(e) => updatePlayer(player.id, {name: e.target.value})}
                                 />
                                 {player.isButton && (
-                                    <span
-                                        className="ml-2 w-7 h-6 text-xs flex items-center justify-center bg-green-500 text-white ring-2 ring-green-600 rounded-full">
-                                        D
-                                    </span>
+                                    <svg
+                                        className="ml-2 w-7 h-6"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <circle cx="12" cy="12" r="10" fill="#22c55e" stroke="#16a34a" strokeWidth="2"/>
+                                        <text
+                                            x="50%"
+                                            y="50%"
+                                            textAnchor="middle"
+                                            dy=".35em"
+                                            dx=".04em"
+                                            fontSize="10"
+                                            fill="white"
+                                            fontFamily="Arial, sans-serif"
+                                        >
+                                            D
+                                        </text>
+                                    </svg>
                                 )}
                             </div>
                         </td>
