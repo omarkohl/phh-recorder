@@ -358,7 +358,7 @@ function Actions(
                         setIsModalOpen(true)
                         setStudyModalActionId(null)
                     }}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-md disabled:bg-yellow-200 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
                     Study
                 </Button>
@@ -374,7 +374,7 @@ function Actions(
                             setCurrentActorId(lastAction.actorId);
                         }
                     }}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-red-500 text-white px-4 py-2 rounded-md disabled:bg-red-200 disabled:text-gray-400 disabled:cursor-not-allowed"
                     disabled={props.actions.length === 0}
                 >
                     Undo Last Action
