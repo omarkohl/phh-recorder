@@ -10,7 +10,7 @@ import {getDisplayName, Player} from "./Player.ts";
 import Action from "./Action.ts";
 import SearchableCombobox from "./SearchableCombobox.tsx";
 import {Button, Checkbox, Input, Textarea} from "@headlessui/react";
-import {CheckIcon} from "@heroicons/react/20/solid";
+import {CheckIcon, TrashIcon} from "@heroicons/react/20/solid";
 import clsx from "clsx";
 
 const DEFAULT_FILE_NAME = 'game.phh';
@@ -405,14 +405,14 @@ function App() {
                             />
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
-                            <button
-                                className={`bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-red-200 disabled:cursor-not-allowed`}
+                            <Button
+                                className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-red-200 disabled:cursor-not-allowed"
                                 tabIndex={-1}
                                 onClick={() => removePlayer(player.id)}
                                 disabled={players.length <= 2}
                             >
-                                Remove
-                            </button>
+                                <TrashIcon className="h-5 w-5"/>
+                            </Button>
                         </td>
                     </tr>
                 ))}
