@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
+import {Input} from "@headlessui/react";
+import clsx from "clsx";
 
 interface BlindsInputProps {
     initialBlinds: number[];
@@ -38,10 +40,13 @@ function BlindsInput({ initialBlinds, onBlindsChange, autoFocus, required }: Rea
 
     return (
         <>
-            <input
+            <Input
                 type="text"
-                id="blinds"
-                className={`mt-1 block w-full px-3 py-2 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                className={clsx(
+                    "w-full px-2 py-1 border-2 shadow-sm",
+                    error ? "border-red-500" : "border-transparent",
+                    "bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                )}
                 placeholder="Enter blinds (e.g. 1, 2)"
                 value={inputValue}
                 onChange={(e) => {
