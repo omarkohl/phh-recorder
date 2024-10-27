@@ -238,7 +238,6 @@ function Actions(
                 <h3 className="text-lg font-medium mb-2 text-left">Next Action</h3>
                 <div className="flex space-x-4">
                     <Combobox<string>
-                        immediate
                         onChange={v => v && setCurrentActorId(v)}
                         value={currentActorId}
                         onClose={() => setActorQuery('')}
@@ -280,7 +279,6 @@ function Actions(
                         </ComboboxOptions>
                     </Combobox>
                     <Combobox<string>
-                        immediate
                         onChange={(action) => action && setCurrentAction(action)}
                         value={currentAction}
                         onClose={() => setActionQuery('')}
