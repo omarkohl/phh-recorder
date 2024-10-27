@@ -10,7 +10,7 @@ import {getDisplayName, Player} from "./Player.ts";
 import Action from "./Action.ts";
 import SearchableCombobox from "./SearchableCombobox.tsx";
 import {Button, Checkbox, Input, Textarea} from "@headlessui/react";
-import {CheckIcon, TrashIcon} from "@heroicons/react/20/solid";
+import {CheckIcon, TrashIcon, PlusIcon, MinusIcon} from "@heroicons/react/20/solid";
 import clsx from "clsx";
 
 const DEFAULT_FILE_NAME = 'game.phh';
@@ -366,17 +366,17 @@ function App() {
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap flex items-center">
                             <Input
-                                type="number"
                                 className={clsx(
                                     "w-full px-3 py-2 sm:text-sm border border-transparent",
                                     "bg-transparent cursor-pointer rounded-md",
-                                    "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
+                                    "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text",
+                                    ""
                                 )}
                                 value={player.initialStack}
                                 onChange={(e) => updatePlayer(player.id, {initialStack: Number(e.target.value)})}
                             />
-                            <button
-                                className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+                            <Button
+                                className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                                 onClick={() => {
                                     const bigBlind = blinds[blinds.length - 1];
                                     updatePlayer(player.id, {initialStack: player.initialStack - 10 * bigBlind});
@@ -384,9 +384,9 @@ function App() {
                                 disabled={blinds.length === 0}
                                 tabIndex={-1}
                             >
-                                -
-                            </button>
-                            <button
+                                <MinusIcon className="h-5 w-5"/>
+                            </Button>
+                            <Button
                                 className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
                                 onClick={() => {
                                     const bigBlind = blinds[blinds.length - 1];
@@ -395,8 +395,8 @@ function App() {
                                 disabled={blinds.length === 0}
                                 tabIndex={-1}
                             >
-                                +
-                            </button>
+                                <PlusIcon className="h-5 w-5"/>
+                            </Button>
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap">
                             <CardInput<[Card, Card]>
