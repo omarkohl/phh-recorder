@@ -288,7 +288,6 @@ function App() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hole
                         Cards
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Button</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
                 </thead>
@@ -296,13 +295,21 @@ function App() {
                 {players.map((player) => (
                     <tr key={player.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                            <input
-                                type="text"
-                                className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
-                                value={player.name}
-                                placeholder={`p${player.position}`}
-                                onChange={(e) => updatePlayer(player.id, {name: e.target.value})}
-                            />
+                            <div className="flex items-center">
+                                <input
+                                    type="text"
+                                    className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                                    value={player.name}
+                                    placeholder={`p${player.position}`}
+                                    onChange={(e) => updatePlayer(player.id, {name: e.target.value})}
+                                />
+                                {player.isButton && (
+                                    <span
+                                        className="ml-2 w-7 h-6 text-xs flex items-center justify-center bg-green-500 text-white ring-2 ring-green-600 rounded-full">
+                                        D
+                                    </span>
+                                )}
+                            </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap flex items-center">
                             <input
@@ -339,16 +346,6 @@ function App() {
                                 cards={player.cards}
                                 onCardsUpdate={(updatedCards) => updatePlayer(player.id, {cards: updatedCards})}
                             />
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                            <button
-                                className={`w-6 h-6 text-xs flex items-center justify-center hover:bg-green-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 ${player.isButton ? 'bg-green-500 text-white ring-2 ring-green-600' : 'bg-gray-200 text-gray-400'} rounded-full`}
-                                tabIndex={-1}
-                                aria-pressed={player.isButton}
-                                aria-label={`Set ${player.name} as button`}
-                                onClick={() => setButton(player.id)}>
-                                D
-                            </button>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <button
