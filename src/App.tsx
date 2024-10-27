@@ -9,7 +9,9 @@ import Actions from "./Actions.tsx";
 import {getDisplayName, Player} from "./Player.ts";
 import Action from "./Action.ts";
 import SearchableCombobox from "./SearchableCombobox.tsx";
-import {Input} from "@headlessui/react";
+import {Button, Checkbox, Input, Textarea} from "@headlessui/react";
+import {CheckIcon} from "@heroicons/react/20/solid";
+import clsx from "clsx";
 
 const DEFAULT_FILE_NAME = 'game.phh';
 
@@ -215,52 +217,81 @@ function App() {
             </div>
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Ante</h3>
-                <input type="text" id="ante"
-                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                <Input type="text" id="ante"
+                       className={clsx(
+                           "w-full px-3 py-2 shadow-sm sm:text-sm",
+                           "border border-gray-300",
+                           "bg-transparent cursor-pointer rounded-md",
+                           "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
+                       )}
                        placeholder="Enter ante (e.g. 0.5)"/>
 
                 <div className="mt-2 flex items-center">
-                    <input id="ante-per-round" name="ante-per-round" type="checkbox"
-                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
+                    <Checkbox
+                        checked={false}
+                        className={clsx(
+                            "group size-6 rounded-md bg-gray-300/10 p-1 ring-1 ring-gray-400 shadow-sm ring-inset data-[checked]:bg-white",
+                            "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        )}
+                    >
+                        <CheckIcon className="hidden size-4 fill-black group-data-[checked]:block"/>
+                    </Checkbox>
                     <label htmlFor="ante-per-round" className="ml-2 block text-sm text-gray-900">Ante collected once per
                         round</label>
                 </div>
             </div>
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Straddles</h3>
-                <input type="text" id="straddles"
-                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                <Input type="text" id="straddles"
+                       className={clsx(
+                           "w-full px-3 py-2 shadow-sm sm:text-sm",
+                           "border border-gray-300",
+                           "bg-transparent cursor-pointer rounded-md",
+                           "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
+                       )}
                        placeholder="Enter straddles (e.g. 4, 8)"/>
             </div>
 
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Context</h3>
-                <textarea
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                <Textarea
+                    className={clsx(
+                        'mt-3 block w-full rounded-lg border border-gray-300 bg-white py-1.5 px-3 text-sm/6 text-black sm:text-sm',
+                        'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-indigo-500 data-[focus]:cursor-text'
+                    )}
                     value={context}
                     onChange={(e) => setContext(e.target.value)}
                 />
             </div>
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Notes</h3>
-                <textarea
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                <Textarea
+                    className={clsx(
+                        'mt-3 block w-full rounded-lg border border-gray-300 bg-white py-1.5 px-3 text-sm/6 text-black sm:text-sm',
+                        'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-indigo-500 data-[focus]:cursor-text'
+                    )}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                 />
             </div>
             <div className="mb-8">
                 <h3 className="text-lg font-medium mb-2 text-left">Source</h3>
-                <textarea
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                <Textarea
+                    className={clsx(
+                        'mt-3 block w-full rounded-lg border border-gray-300 bg-white py-1.5 px-3 text-sm/6 text-black sm:text-sm',
+                        'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-indigo-500 data-[focus]:cursor-text'
+                    )}
                     value={source}
                     onChange={(e) => setSource(e.target.value)}
                 />
             </div>
 
             <div className="text-left">
-                <button
-                    className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                <Button
+                    className={clsx(
+                        "mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600",
+                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500"
+                    )}
                     onClick={() => {
                         let initialStack: number;
                         if (blinds.length === 0) {
@@ -272,7 +303,7 @@ function App() {
                     }}
                 >
                     Add Player
-                </button>
+                </Button>
                 <span className="ml-2 text-gray-400">({players.length} players)</span>
             </div>
 
@@ -299,9 +330,13 @@ function App() {
                     >
                         <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                                <input
+                                <Input
                                     type="text"
-                                    className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                                    className={clsx(
+                                        "w-full px-3 py-2 sm:text-sm border border-transparent",
+                                        "bg-transparent cursor-pointer rounded-md",
+                                        "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
+                                    )}
                                     value={player.name}
                                     placeholder={`p${player.position}`}
                                     onChange={(e) => updatePlayer(player.id, {name: e.target.value})}
@@ -315,9 +350,13 @@ function App() {
                             </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap flex items-center">
-                            <input
+                            <Input
                                 type="number"
-                                className="w-full px-2 py-1 border border-transparent bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                                className={clsx(
+                                    "w-full px-3 py-2 sm:text-sm border border-transparent",
+                                    "bg-transparent cursor-pointer rounded-md",
+                                    "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
+                                )}
                                 value={player.initialStack}
                                 onChange={(e) => updatePlayer(player.id, {initialStack: Number(e.target.value)})}
                             />
@@ -435,8 +474,11 @@ function App() {
             </div>
 
             <div className="text-left">
-                <button
-                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                <Button
+                    className={clsx(
+                        "mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-200 disabled:text-gray-400 disabled:cursor-not-allowed",
+                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500"
+                    )}
                     onClick={() => {
                         download();
                         // move button
@@ -455,16 +497,22 @@ function App() {
                     disabled={players.length <= 2 || blinds.length === 0}
                 >
                     Download & Continue Game
-                </button>
-                <button
-                    className="mt-4 ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                </Button>
+                <Button
+                    className={clsx(
+                        "mt-4 ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed",
+                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500"
+                    )}
                     onClick={download}
                     disabled={players.length <= 2 || blinds.length === 0}
                 >
                     Download Only
-                </button>
-                <button
-                    className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                </Button>
+                <Button
+                    className={clsx(
+                        "mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600",
+                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500"
+                    )}
                     onClick={() => {
                         setPlayers((players) => (players.map(player => ({
                             ...player,
@@ -474,9 +522,12 @@ function App() {
                     }}
                 >
                     Clear Actions
-                </button>
-                <button
-                    className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                </Button>
+                <Button
+                    className={clsx(
+                        "mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600",
+                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500"
+                    )}
                     onClick={() => {
                         setPlayers((players) => (players.map(player => ({
                             ...player,
@@ -485,9 +536,12 @@ function App() {
                     }}
                 >
                     Clear Hole Cards
-                </button>
-                <button
-                    className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:bg-red-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                </Button>
+                <Button
+                    className={clsx(
+                        "mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:bg-red-200 disabled:text-gray-400 disabled:cursor-not-allowed",
+                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
+                    )}
                     onClick={() => {
                         const bigBlind = blinds[blinds.length - 1];
                         setPlayers((players) => (players.map(player => ({
@@ -498,7 +552,7 @@ function App() {
                     disabled={blinds.length === 0}
                 >
                     Reset Stacks
-                </button>
+                </Button>
             </div>
         </div>
     );

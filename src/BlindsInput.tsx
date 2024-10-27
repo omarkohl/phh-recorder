@@ -43,9 +43,10 @@ function BlindsInput({ initialBlinds, onBlindsChange, autoFocus, required }: Rea
             <Input
                 type="text"
                 className={clsx(
-                    "w-full px-2 py-1 border-2 shadow-sm",
-                    error ? "border-red-500" : "border-transparent",
-                    "bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text"
+                    "w-full px-3 py-2 shadow-sm sm:text-sm",
+                    error ? "border-2 border-red-500" : "border border-gray-300",
+                    "bg-transparent cursor-pointer rounded-md",
+                    "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
                 )}
                 placeholder="Enter blinds (e.g. 1, 2)"
                 value={inputValue}

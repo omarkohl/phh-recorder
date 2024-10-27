@@ -345,7 +345,10 @@ function Actions(
             <div className="flex space-x-4 mt-3 mb-8">
                 <Button
                     onClick={() => handleAction(false, '')}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                    className={clsx(
+                        "bg-blue-500 text-white px-4 py-2 rounded-md",
+                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
+                    )}
                 >
                     Submit
                 </Button>
@@ -358,11 +361,13 @@ function Actions(
                         setIsModalOpen(true)
                         setStudyModalActionId(null)
                     }}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded-md disabled:bg-yellow-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    className={clsx(
+                        "bg-yellow-500 text-white px-4 py-2 rounded-md disabled:bg-yellow-200 disabled:text-gray-400 disabled:cursor-not-allowed",
+                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
+                    )}
                 >
                     Study
                 </Button>
-                {/* Add an undo button */}
                 <Button
                     onClick={() => {
                         const lastAction = props.actions[props.actions.length - 1];
@@ -374,7 +379,10 @@ function Actions(
                             setCurrentActorId(lastAction.actorId);
                         }
                     }}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md disabled:bg-red-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    className={clsx(
+                        "bg-red-500 text-white px-4 py-2 rounded-md disabled:bg-red-200 disabled:text-gray-400 disabled:cursor-not-allowed",
+                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
+                    )}
                     disabled={props.actions.length === 0}
                 >
                     Undo Last Action
@@ -406,27 +414,33 @@ function Actions(
                                         action instanceof FoldAction
                                     ) &&
                                     (
-                                        <button
-                                            className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                                        <Button
+                                            className={clsx(
+                                                "ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm",
+                                                "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
+                                            )}
                                             onClick={() => {
                                                 setStudyModalActionId(action.id);
                                                 setIsModalOpen(true);
                                             }}
                                         >
                                             Study
-                                        </button>
+                                        </Button>
                                     )
                                 }
                                 {action.getIsStudySpot() && (
-                                    <button
-                                        className="ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                                    <Button
+                                        className={clsx(
+                                            "ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm",
+                                            "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
+                                        )}
                                         onClick={() => {
                                             setStudyModalActionId(action.id);
                                             setIsModalOpen(true);
                                         }}
                                     >
                                         Edit Answer
-                                    </button>
+                                    </Button>
                                 )}
                             </p>
                         </div>

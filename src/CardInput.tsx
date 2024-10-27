@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'react';
 import Card from './Card';
+import {Input} from "@headlessui/react";
+import clsx from "clsx";
 
 export function CardInput<T extends Card[]>(props: Readonly<{
     cards: T,
@@ -37,9 +39,14 @@ export function CardInput<T extends Card[]>(props: Readonly<{
 
     return (
         <div>
-            <input
+            <Input
                 type="text"
-                className={`w-full px-2 py-1 border ${error ? 'border-red-500' : 'border-transparent'} bg-transparent cursor-pointer rounded-md focus:border-gray-300 focus:bg-white focus:cursor-text font-mono`}
+                className={clsx(
+                    "w-full px-2 py-1 font-mono",
+                    error ? "border-2 border-red-500" : "border border-transparent",
+                    "bg-transparent cursor-pointer rounded-md",
+                    "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
+                )}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onBlur={handleBlur}
