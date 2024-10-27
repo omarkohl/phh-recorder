@@ -293,7 +293,10 @@ function App() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                 {players.map((player) => (
-                    <tr key={player.id}>
+                    <tr
+                        key={player.id}
+                        className={heroPlayerId === player.id ? 'bg-yellow-100' : ''}
+                    >
                         <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                                 <input
