@@ -240,6 +240,7 @@ function Actions(
                     <Combobox<string>
                         onChange={v => v && setCurrentActorId(v)}
                         value={currentActorId}
+                        key={currentActorId}
                         onClose={() => setActorQuery('')}
                     >
                         <div className="relative">
@@ -281,6 +282,7 @@ function Actions(
                     <Combobox<string>
                         onChange={(action) => action && setCurrentAction(action)}
                         value={currentAction}
+                        key={currentAction}
                         onClose={() => setActionQuery('')}
                     >
                         <div className="relative">
