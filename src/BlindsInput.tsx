@@ -4,9 +4,11 @@ import { debounce } from "lodash";
 interface BlindsInputProps {
     initialBlinds: number[];
     onBlindsChange: (blinds: number[]) => void;
+    autoFocus?: boolean;
+    required?: boolean;
 }
 
-function BlindsInput({ initialBlinds, onBlindsChange }: Readonly<BlindsInputProps>) {
+function BlindsInput({ initialBlinds, onBlindsChange, autoFocus, required }: Readonly<BlindsInputProps>) {
     const [inputValue, setInputValue] = useState(initialBlinds.join(', '));
     const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +48,13 @@ function BlindsInput({ initialBlinds, onBlindsChange }: Readonly<BlindsInputProp
                     setInputValue(e.target.value);
                     handleBlindsChange(e.target.value);
                 }}
-                autoFocus
+                onBlur={() => {
+                    handleBlindsChange.flush();
+                    if (required && inputValue === '') {
+                        setError("Please enter the blinds.");
+                    }
+                }}
+                {...{ autoFocus}}
             />
             {error && <p className="mt-2 text-sm text-red-600 text-left">{error}</p>}
         </>

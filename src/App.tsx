@@ -211,7 +211,7 @@ function App() {
 
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Blinds</h3>
-                <BlindsInput initialBlinds={blinds} onBlindsChange={setBlinds}/>
+                <BlindsInput initialBlinds={blinds} onBlindsChange={setBlinds} autoFocus required/>
             </div>
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Ante</h3>
