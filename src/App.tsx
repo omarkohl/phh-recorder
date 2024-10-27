@@ -328,7 +328,7 @@ function App() {
                         key={player.id}
                         className={heroPlayerId === player.id ? 'bg-yellow-100' : ''}
                     >
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-2 whitespace-nowrap">
                             <div className="flex items-center">
                                 <Input
                                     type="text"
@@ -364,7 +364,7 @@ function App() {
                                 )}
                             </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap flex items-center">
+                        <td className="px-6 py-2 whitespace-nowrap flex items-center">
                             <Input
                                 type="number"
                                 className={clsx(
@@ -398,13 +398,13 @@ function App() {
                                 +
                             </button>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-2 whitespace-nowrap">
                             <CardInput<[Card, Card]>
                                 cards={player.cards}
                                 onCardsUpdate={(updatedCards) => updatePlayer(player.id, {cards: updatedCards})}
                             />
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-2 whitespace-nowrap">
                             <button
                                 className={`bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-red-200 disabled:cursor-not-allowed`}
                                 tabIndex={-1}
