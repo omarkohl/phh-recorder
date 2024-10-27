@@ -415,6 +415,11 @@ function App() {
                         )
                     )
                 }
+                removeAction={
+                    (id: string) => setActions(
+                        actions.filter(action => action.id !== id)
+                    )
+                }
                 heroId={heroPlayerId}
             />
 

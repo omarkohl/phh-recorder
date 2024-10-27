@@ -55,6 +55,7 @@ function Actions(
         actions: Action[],
         appendAction: (action: Action) => void,
         updateActionAnswer: (id: string, answer: string) => void,
+        removeAction: (id: string) => void,
         heroId: string,
     }>
 ) {
@@ -360,6 +361,23 @@ function Actions(
                     className="bg-yellow-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     Study
+                </Button>
+                {/* Add an undo button */}
+                <Button
+                    onClick={() => {
+                        const lastAction = props.actions[props.actions.length - 1];
+                        if (lastAction) {
+                            props.removeAction(lastAction.id);
+                            if (lastAction instanceof FoldAction || lastAction instanceof MuckAction) {
+                                props.updatePlayer(lastAction.actorId, {isActive: true});
+                            }
+                            setCurrentActorId(lastAction.actorId);
+                        }
+                    }}
+                    className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={props.actions.length === 0}
+                >
+                    Undo Last Action
                 </Button>
             </div>
             <div>
