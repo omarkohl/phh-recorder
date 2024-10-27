@@ -475,6 +475,30 @@ function App() {
                 >
                     Clear Actions
                 </button>
+                <button
+                    className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                    onClick={() => {
+                        setPlayers((players) => (players.map(player => ({
+                            ...player,
+                            cards: [new Card('?', '?'), new Card('?', '?')],
+                        }))));
+                    }}
+                >
+                    Clear Hole Cards
+                </button>
+                <button
+                    className="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:bg-red-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    onClick={() => {
+                        const bigBlind = blinds[blinds.length - 1];
+                        setPlayers((players) => (players.map(player => ({
+                            ...player,
+                            initialStack: 100 * bigBlind,
+                        }))));
+                    }}
+                    disabled={blinds.length === 0}
+                >
+                    Reset Stacks
+                </button>
             </div>
         </div>
     );
