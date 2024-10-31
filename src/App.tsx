@@ -4,7 +4,7 @@ import {useCallback, useEffect, useState} from 'react';
 import './App.css';
 import {CardInput} from "./CardInput.tsx";
 import Card from "./Card.ts";
-import BlindsInput from "./BlindsInput.tsx";
+import NumberListInput from "./NumberListInput.tsx";
 import Actions from "./Actions.tsx";
 import {getDisplayName, Player} from "./Player.ts";
 import Action from "./Action.ts";
@@ -50,6 +50,9 @@ function App() {
     ]);
 
     const [blinds, setBlinds] = useState<number[]>([]);
+    const [antes, setAntes] = useState<number[]>([]);
+    const [antePerRound, setAntePerRound] = useState<boolean>(false);
+    const [straddles, setStraddles] = useState<number[]>([]);
     const [playersModified, setPlayersModified] = useState(false);
     const [heroPlayerId, setHeroPlayerId] = useState<string>(players[0].id);
     const [context, setContext] = useState<string>('');
@@ -161,12 +164,47 @@ function App() {
         const phhActions = sortedPlayers.map(player => `d dh p${player.position} ` + player.cards.map(card => card.toString()).join(''));
         phhActions.push(...actions.map((a) => a.toPHH()))
 
+        let phhAntes: number[];
+        if (antes.length === sortedPlayers.length) {
+            phhAntes = antes;
+        } else if (antes.length === 0) {
+            phhAntes = Array(sortedPlayers.length).fill(0);
+        } else if (antes.length === 1) {
+            if (antePerRound) {
+                // if the ante is paid once per round, the ante is collected from the big blind
+                phhAntes = Array(sortedPlayers.length).fill(0);
+                phhAntes[1] = antes[0];
+            } else {
+                phhAntes = Array(sortedPlayers.length).fill(antes[0]);
+            }
+        } else {
+            throw new Error("Invalid ante configuration. " +
+                "Must be either a single number or a list the " +
+                "same size as the number of players.");
+        }
+
+        let phhBlindsOrStraddles = sortedPlayers.map((_, index) => blinds[index] || 0);
+        if (straddles.length === sortedPlayers.length) {
+            phhBlindsOrStraddles = phhBlindsOrStraddles.map((blind, index) => blind + straddles[index]);
+        } else if (straddles.length > 0) {
+            // append straddles to the blinds, starting with the first zero value
+            const firstZeroIndex = phhBlindsOrStraddles.findIndex(blind => blind === 0);
+            if (firstZeroIndex === -1 || firstZeroIndex + straddles.length > phhBlindsOrStraddles.length) {
+                throw new Error("Invalid straddle configuration. " +
+                    "Must be either a list the same size as the number of players " +
+                    "or a list starting with the first zero blind.");
+            }
+            for (let i = 0; i < straddles.length; i++) {
+                phhBlindsOrStraddles[firstZeroIndex + i] += straddles[i];
+            }
+        }
+
         // Convert game state to TOML
         const gameData = {
             variant: 'NT',
             ante_trimming_status: true,
-            antes: sortedPlayers.map(() => 0),
-            blinds_or_straddles: sortedPlayers.map((_, index) => blinds[index] || 0),
+            antes: phhAntes,
+            blinds_or_straddles: phhBlindsOrStraddles,
             min_bet: blinds[blinds.length - 1],
             starting_stacks: sortedPlayers.map(player => player.initialStack),
             actions: phhActions,
@@ -213,26 +251,29 @@ function App() {
 
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Blinds</h3>
-                <BlindsInput initialBlinds={blinds} onBlindsChange={setBlinds} autoFocus required/>
+                <NumberListInput
+                    initialNumbers={blinds}
+                    onChange={setBlinds}
+                    autoFocus
+                    required
+                    placeholder="Enter blinds (e.g. 1, 2)"
+                />
             </div>
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Ante</h3>
-                <Input type="text" id="ante"
-                       className={clsx(
-                           "w-full px-3 py-2 shadow-sm sm:text-sm",
-                           "border border-gray-300",
-                           "bg-transparent cursor-pointer rounded-md",
-                           "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
-                       )}
-                       placeholder="Enter ante (e.g. 0.5)"/>
-
+                <NumberListInput
+                    initialNumbers={antes}
+                    onChange={setAntes}
+                    placeholder="Enter antes (e.g. 1)"
+                />
                 <div className="mt-2 flex items-center">
                     <Checkbox
-                        checked={false}
+                        checked={antePerRound}
                         className={clsx(
                             "group size-6 rounded-md bg-gray-300/10 p-1 ring-1 ring-gray-400 shadow-sm ring-inset data-[checked]:bg-white",
                             "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         )}
+                        onChange={(c) => setAntePerRound(c)}
                     >
                         <CheckIcon className="hidden size-4 fill-black group-data-[checked]:block"/>
                     </Checkbox>
@@ -242,14 +283,11 @@ function App() {
             </div>
             <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2 text-left">Straddles</h3>
-                <Input type="text" id="straddles"
-                       className={clsx(
-                           "w-full px-3 py-2 shadow-sm sm:text-sm",
-                           "border border-gray-300",
-                           "bg-transparent cursor-pointer rounded-md",
-                           "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
-                       )}
-                       placeholder="Enter straddles (e.g. 4, 8)"/>
+                <NumberListInput
+                    initialNumbers={straddles}
+                    onChange={setStraddles}
+                    placeholder="Enter straddles (e.g. 4, 8)"
+                />
             </div>
 
             <div className="mb-4">
