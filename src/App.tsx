@@ -206,7 +206,7 @@ function App() {
             : undefined;
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 max-w-2xl">
             <div className="mb-4">
                 <h1 className="text-2xl font-bold">Poker Hand Recorder</h1>
             </div>
@@ -523,9 +523,11 @@ function App() {
                 >
                     Download Only
                 </Button>
+            </div>
+            <div className="text-left">
                 <Button
                     className={clsx(
-                        "mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600",
+                        "mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600",
                         "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500"
                     )}
                     onClick={() => {
