@@ -1,5 +1,13 @@
 import {useState} from 'react';
-import {Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle, Input, Button} from "@headlessui/react";
+import {
+    Description,
+    Dialog,
+    DialogBackdrop,
+    DialogPanel,
+    DialogTitle,
+    Button,
+    Textarea
+} from "@headlessui/react";
 
 const StudyModal = (
     props: Readonly<{
@@ -33,7 +41,7 @@ const StudyModal = (
                         Describe the correct action in this spot.
                         Leave it empty to default to the action actually taken.
                     </Description>
-                    <Input
+                    <Textarea
                         value={answer}
                         autoFocus
                         onChange={(e) => setAnswer(e.target.value)}
