@@ -258,6 +258,24 @@ function Actions(
                             <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
                                 <ChevronDownIcon className="size-4 fill-gray-600 group-data-[hover]:fill-black"/>
                             </ComboboxButton>
+                            {isPlayer(findActorById(currentActorId)) && (findActorById(currentActorId) as Player).isButton && (
+                                <svg className="absolute top-1/2 right-10 transform -translate-y-1/2 w-6 h-6"
+                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" fill="#22c55e" stroke="#16a34a" strokeWidth="2"/>
+                                    <text
+                                        x="50%"
+                                        y="50%"
+                                        textAnchor="middle"
+                                        dy=".35em"
+                                        dx=".04em"
+                                        fontSize="10"
+                                        fill="white"
+                                        fontFamily="Arial, sans-serif"
+                                    >
+                                        D
+                                    </text>
+                                </svg>
+                            )}
                         </div>
                         <ComboboxOptions
                             anchor="bottom"
@@ -277,8 +295,32 @@ function Actions(
                                     )}
                                 >
                                     <CheckIcon
-                                        className="invisible size-4 fill-gray-600 group-data-[selected]:visible"/>
-                                    <div className="text-sm/6 text-black">{getDisplayName(player)}</div>
+                                        className="invisible size-4 fill-gray-600 group-data-[selected]:visible"
+                                    />
+                                    <div className="text-sm/6 text-black flex items-center">
+                                        {getDisplayName(player)}
+                                    </div>
+                                    <div className="ml-auto">
+                                        {isPlayer(player) && player.isButton && (
+                                            <svg className="ml-2 w-6 h-6" viewBox="0 0 24 24"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <circle cx="12" cy="12" r="10" fill="#22c55e" stroke="#16a34a"
+                                                        strokeWidth="2"/>
+                                                <text
+                                                    x="50%"
+                                                    y="50%"
+                                                    textAnchor="middle"
+                                                    dy=".35em"
+                                                    dx=".04em"
+                                                    fontSize="10"
+                                                    fill="white"
+                                                    fontFamily="Arial, sans-serif"
+                                                >
+                                                    D
+                                                </text>
+                                            </svg>
+                                        )}
+                                    </div>
                                 </ComboboxOption>
                             ))}
                         </ComboboxOptions>
