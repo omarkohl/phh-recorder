@@ -249,7 +249,8 @@ function Actions(
                                 displayValue={(actorId: string) => findActorById(actorId) && getDisplayName(findActorById(actorId))}
                                 className={clsx(
                                     'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
-                                    'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-2 data-[focus]:outline-indigo-500'
+                                    'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-2 data-[focus]:outline-indigo-500',
+                                    {'bg-yellow-100': currentActorId === props.heroId},
                                 )}
                                 onChange={(event) => setActorQuery(event.target.value)}
                                 ref={nextActorInputRef}
@@ -270,7 +271,10 @@ function Actions(
                                 <ComboboxOption
                                     key={player.id}
                                     value={player.id}
-                                    className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-gray-200"
+                                    className={clsx(
+                                        "group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-gray-200",
+                                        {'bg-yellow-100': player.id === props.heroId},
+                                    )}
                                 >
                                     <CheckIcon
                                         className="invisible size-4 fill-gray-600 group-data-[selected]:visible"/>
