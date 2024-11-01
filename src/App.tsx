@@ -404,11 +404,11 @@ function App() {
                         </td>
                         <td className="px-6 py-2 whitespace-nowrap flex items-center">
                             <Input
+                                type="number"
                                 className={clsx(
                                     "w-full px-3 py-2 sm:text-sm border border-transparent",
                                     "bg-transparent cursor-pointer rounded-md",
                                     "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text",
-                                    ""
                                 )}
                                 value={player.initialStack}
                                 onChange={(e) => updatePlayer(player.id, {initialStack: Number(e.target.value)})}
