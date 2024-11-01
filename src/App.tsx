@@ -348,16 +348,16 @@ function App() {
             <table id="players-table" className="min-w-full divide-y divide-gray-200 mb-4">
                 <thead className="bg-gray-50">
                 <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player
                         Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Initial
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Initial
                         Stack
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hole
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Hole
                         Cards
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2">Actions</th>
                 </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -366,7 +366,7 @@ function App() {
                         key={player.id}
                         className={heroPlayerId === player.id ? 'bg-yellow-100' : ''}
                     >
-                        <td className="px-6 py-2 whitespace-nowrap">
+                        <td className="px-4 py-2 whitespace-nowrap">
                             <div className="flex items-center">
                                 <Input
                                     type="text"
@@ -402,7 +402,7 @@ function App() {
                                 )}
                             </div>
                         </td>
-                        <td className="px-6 py-2 whitespace-nowrap flex items-center">
+                        <td className="px-4 py-2 whitespace-nowrap flex items-center">
                             <Input
                                 type="number"
                                 className={clsx(
@@ -436,13 +436,13 @@ function App() {
                                 <PlusIcon className="h-5 w-5"/>
                             </Button>
                         </td>
-                        <td className="px-6 py-2 whitespace-nowrap">
+                        <td className="px-4 py-2 whitespace-nowrap">
                             <CardInput<[Card, Card]>
                                 cards={player.cards}
                                 onCardsUpdate={(updatedCards) => updatePlayer(player.id, {cards: updatedCards})}
                             />
                         </td>
-                        <td className="px-6 py-2 whitespace-nowrap">
+                        <td className="px-4 py-2 whitespace-nowrap">
                             <Button
                                 className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-red-200 disabled:cursor-not-allowed"
                                 tabIndex={-1}
