@@ -444,44 +444,63 @@ function Actions(
                 <h3 className="text-lg font-medium mb-2 text-left">Action History</h3>
                 <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
                     {props.actions.map((action) => (
-                        <div key={action.id} className="mt-1">
-                            <div className="font-bold">
+                        <div key={action.id} className="flex justify-between mt-1 items-center">
+                            <div className="font-bold w-1/5">
                                 {getDisplayName(findActorById(action.actorId))}
                             </div>
-                            <div className="ml-1">
-                                {action instanceof DealBoardAction ? (
-                                    <>
-                                        <span>deals</span>
-                                        <div className="flex mt-1">
-                                            {action.board.map((card, i) => (
-                                                <CardSVG key={i} suit={card.suit} rank={card.rank} width={25}
-                                                         height={37} className="ml-1"/>
-                                            ))}
-                                        </div>
-                                    </>
-                                ) : (
-                                    action.toString()
-                                )}
-                            </div>
-                            {action.getIsStudySpot() && action.getAnswer() && (
-                                <div className="ml-4 text-gray-500">
-                                    {action.getAnswer().length > 20
+                            {action instanceof DealBoardAction ? (
+                                <>
+                                    <div className="pl-1 w-1/5">deals</div>
+                                    <div className="flex pl-1 w-1/5">
+                                        {action.board.map((card, i) => (
+                                            <CardSVG key={i} suit={card.suit} rank={card.rank} width={25}
+                                                     height={37} className="ml-1"/>
+                                        ))}
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="pl-1 w-1/5">
+                                        {action.toString()}
+                                    </div>
+                                    <div className="pl-1 w-1/5">
+                                    </div>
+                                </>
+                            )}
+                            <div className="pl-4 text-gray-500 w-1/5">
+                                {action.getIsStudySpot() && action.getAnswer() && (
+                                    action.getAnswer().length > 20
                                         ? `${action.getAnswer().substring(0, 20)}...`
                                         : action.getAnswer()
-                                    }
-                                </div>
-                            )}
-                            {!action.getIsStudySpot() &&
-                                action.actorId === props.heroId &&
-                                (
-                                    action instanceof BetRaiseAction ||
-                                    action instanceof CheckCallAction ||
-                                    action instanceof FoldAction
-                                ) &&
-                                (
+                                )}
+                            </div>
+                            <div className="pl-4 w-1/5">
+                                {!action.getIsStudySpot() &&
+                                    action.actorId === props.heroId &&
+                                    (
+                                        action instanceof BetRaiseAction ||
+                                        action instanceof CheckCallAction ||
+                                        action instanceof FoldAction
+                                    ) &&
+                                    (
+                                        <Button
+                                            className={clsx(
+                                                "px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm",
+                                                "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
+                                            )}
+                                            onClick={() => {
+                                                setStudyModalActionId(action.id);
+                                                setIsModalOpen(true);
+                                            }}
+                                        >
+                                            Study
+                                        </Button>
+                                    )
+                                }
+                                {action.getIsStudySpot() && (
                                     <Button
                                         className={clsx(
-                                            "ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm",
+                                            "px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm",
                                             "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
                                         )}
                                         onClick={() => {
@@ -489,24 +508,10 @@ function Actions(
                                             setIsModalOpen(true);
                                         }}
                                     >
-                                        Study
+                                        Edit Answer
                                     </Button>
-                                )
-                            }
-                            {action.getIsStudySpot() && (
-                                <Button
-                                    className={clsx(
-                                        "ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm",
-                                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
-                                    )}
-                                    onClick={() => {
-                                        setStudyModalActionId(action.id);
-                                        setIsModalOpen(true);
-                                    }}
-                                >
-                                    Edit Answer
-                                </Button>
-                            )}
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>
