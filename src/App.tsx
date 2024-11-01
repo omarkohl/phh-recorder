@@ -402,39 +402,41 @@ function App() {
                                 )}
                             </div>
                         </td>
-                        <td className="px-4 py-2 whitespace-nowrap flex items-center">
-                            <Input
-                                type="number"
-                                className={clsx(
-                                    "w-full px-3 py-2 sm:text-sm border border-transparent",
-                                    "bg-transparent cursor-pointer rounded-md",
-                                    "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text",
-                                )}
-                                value={player.initialStack}
-                                onChange={(e) => updatePlayer(player.id, {initialStack: Number(e.target.value)})}
-                            />
-                            <Button
-                                className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                                onClick={() => {
-                                    const bigBlind = blinds[blinds.length - 1];
-                                    updatePlayer(player.id, {initialStack: player.initialStack - 10 * bigBlind});
-                                }}
-                                disabled={blinds.length === 0}
-                                tabIndex={-1}
-                            >
-                                <MinusIcon className="h-5 w-5"/>
-                            </Button>
-                            <Button
-                                className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
-                                onClick={() => {
-                                    const bigBlind = blinds[blinds.length - 1];
-                                    updatePlayer(player.id, {initialStack: player.initialStack + 10 * bigBlind});
-                                }}
-                                disabled={blinds.length === 0}
-                                tabIndex={-1}
-                            >
-                                <PlusIcon className="h-5 w-5"/>
-                            </Button>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                            <div className="flex items-center">
+                                <Input
+                                    type="number"
+                                    className={clsx(
+                                        "w-full px-3 py-2 sm:text-sm border border-transparent",
+                                        "bg-transparent cursor-pointer rounded-md",
+                                        "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text",
+                                    )}
+                                    value={player.initialStack}
+                                    onChange={(e) => updatePlayer(player.id, {initialStack: Number(e.target.value)})}
+                                />
+                                <Button
+                                    className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                    onClick={() => {
+                                        const bigBlind = blinds[blinds.length - 1];
+                                        updatePlayer(player.id, {initialStack: player.initialStack - 10 * bigBlind});
+                                    }}
+                                    disabled={blinds.length === 0}
+                                    tabIndex={-1}
+                                >
+                                    <MinusIcon className="h-5 w-5"/>
+                                </Button>
+                                <Button
+                                    className="ml-2 px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+                                    onClick={() => {
+                                        const bigBlind = blinds[blinds.length - 1];
+                                        updatePlayer(player.id, {initialStack: player.initialStack + 10 * bigBlind});
+                                    }}
+                                    disabled={blinds.length === 0}
+                                    tabIndex={-1}
+                                >
+                                    <PlusIcon className="h-5 w-5"/>
+                                </Button>
+                            </div>
                         </td>
                         <td className="px-4 py-2 whitespace-nowrap">
                             <CardInput<[Card, Card]>

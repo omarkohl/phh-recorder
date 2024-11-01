@@ -23,6 +23,7 @@ import {CheckIcon, ChevronDownIcon} from "@heroicons/react/20/solid";
 import {CardInput} from "./CardInput.tsx";
 import Card from "./Card.ts";
 import StudyModal from "./StudyModal.tsx";
+import CardSVG from "./CardSVG.tsx";
 
 enum PlayerAction {
     Fold = 'fold',
@@ -243,7 +244,7 @@ function Actions(
                         key={currentActorId}
                         onClose={() => setActorQuery('')}
                     >
-                        <div className="relative">
+                        <div className="relative h-10">
                             <ComboboxInput
                                 placeholder="Choose an actor"
                                 displayValue={(actorId: string) => findActorById(actorId) && getDisplayName(findActorById(actorId))}
@@ -251,6 +252,7 @@ function Actions(
                                     'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
                                     'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-2 data-[focus]:outline-indigo-500',
                                     {'bg-yellow-100': currentActorId === props.heroId},
+                                    'h-10',
                                 )}
                                 onChange={(event) => setActorQuery(event.target.value)}
                                 ref={nextActorInputRef}
@@ -282,7 +284,7 @@ function Actions(
                             transition
                             className={clsx(
                                 'w-[var(--input-width)] rounded-xl border border-gray-300 bg-gray-100 p-1 [--anchor-gap:var(--spacing-1)] empty:invisible',
-                                'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
+                                'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0',
                             )}
                         >
                             {filteredPlayers.map(player => (
@@ -331,12 +333,13 @@ function Actions(
                         key={currentAction}
                         onClose={() => setActionQuery('')}
                     >
-                        <div className="relative">
+                        <div className="relative h-10">
                             <ComboboxInput
                                 placeholder="Choose an action"
                                 className={clsx(
                                     'w-full rounded-lg border-none bg-gray-100 py-1.5 pr-8 pl-3 text-sm/6 text-black',
-                                    'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-2 data-[focus]:outline-indigo-500'
+                                    'focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-2 data-[focus]:outline-indigo-500',
+                                    'h-10',
                                 )}
                                 onChange={(event) => setActionQuery(event.target.value)}
                             />
@@ -442,42 +445,40 @@ function Actions(
                 <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
                     {props.actions.map((action) => (
                         <div key={action.id} className="mt-1">
-                            <p>
-                            <span className="font-bold">
+                            <div className="font-bold">
                                 {getDisplayName(findActorById(action.actorId))}
-                            </span>
-                                <span className="ml-1">{action.toString()}</span>
-                                {action.getIsStudySpot() && action.getAnswer() && (
-                                    <span className="ml-4 text-gray-500">
-                                {action.getAnswer().length > 20
-                                    ? `${action.getAnswer().substring(0, 20)}...`
-                                    : action.getAnswer()
-                                }
-                            </span>
+                            </div>
+                            <div className="ml-1">
+                                {action instanceof DealBoardAction ? (
+                                    <>
+                                        <span>deals</span>
+                                        <div className="flex mt-1">
+                                            {action.board.map((card, i) => (
+                                                <CardSVG key={i} suit={card.suit} rank={card.rank} width={25}
+                                                         height={37} className="ml-1"/>
+                                            ))}
+                                        </div>
+                                    </>
+                                ) : (
+                                    action.toString()
                                 )}
-                                {!action.getIsStudySpot() &&
-                                    action.actorId === props.heroId &&
-                                    (
-                                        action instanceof BetRaiseAction ||
-                                        action instanceof CheckCallAction ||
-                                        action instanceof FoldAction
-                                    ) &&
-                                    (
-                                        <Button
-                                            className={clsx(
-                                                "ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm",
-                                                "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
-                                            )}
-                                            onClick={() => {
-                                                setStudyModalActionId(action.id);
-                                                setIsModalOpen(true);
-                                            }}
-                                        >
-                                            Study
-                                        </Button>
-                                    )
-                                }
-                                {action.getIsStudySpot() && (
+                            </div>
+                            {action.getIsStudySpot() && action.getAnswer() && (
+                                <div className="ml-4 text-gray-500">
+                                    {action.getAnswer().length > 20
+                                        ? `${action.getAnswer().substring(0, 20)}...`
+                                        : action.getAnswer()
+                                    }
+                                </div>
+                            )}
+                            {!action.getIsStudySpot() &&
+                                action.actorId === props.heroId &&
+                                (
+                                    action instanceof BetRaiseAction ||
+                                    action instanceof CheckCallAction ||
+                                    action instanceof FoldAction
+                                ) &&
+                                (
                                     <Button
                                         className={clsx(
                                             "ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm",
@@ -488,10 +489,24 @@ function Actions(
                                             setIsModalOpen(true);
                                         }}
                                     >
-                                        Edit Answer
+                                        Study
                                     </Button>
-                                )}
-                            </p>
+                                )
+                            }
+                            {action.getIsStudySpot() && (
+                                <Button
+                                    className={clsx(
+                                        "ml-4 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm",
+                                        "focus:outline-none data-[focus]:outline-1 data-[focus]:outline-indigo-500",
+                                    )}
+                                    onClick={() => {
+                                        setStudyModalActionId(action.id);
+                                        setIsModalOpen(true);
+                                    }}
+                                >
+                                    Edit Answer
+                                </Button>
+                            )}
                         </div>
                     ))}
                 </div>
