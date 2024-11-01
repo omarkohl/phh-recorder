@@ -43,10 +43,11 @@ export function CardInput<T extends Card[]>(props: Readonly<{
             <Input
                 type="text"
                 className={clsx(
-                    "w-full px-2 py-1 font-mono",
+                    "w-full px-1 py-1 font-mono",
                     error ? "border-2 border-red-500" : "border border-transparent",
                     "bg-transparent cursor-pointer rounded-md",
-                    "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text"
+                    "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text",
+                    "text-gray-400 focus:text-black",
                 )}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -54,7 +55,7 @@ export function CardInput<T extends Card[]>(props: Readonly<{
             />
             {error && <p className="text-red-500 text-sm mt-1 text-left">{error}</p>}
             {/* the cards should be placed next to each other */}
-            <div className="flex mt-1">
+            <div className="flex">
                 {props.cards.map((card, i) => (
                     <CardSVG key={i} suit={card.suit} rank={card.rank} width={25} height={37} className="ml-1"/>
                 ))}
