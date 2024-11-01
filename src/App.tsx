@@ -244,7 +244,7 @@ function App() {
             : undefined;
 
     return (
-        <div className="container mx-auto p-4 max-w-2xl">
+        <div className="container mx-auto p-4 max-w-2xl four-color-deck">
             <div className="mb-4">
                 <h1 className="text-2xl font-bold">Poker Hand Recorder</h1>
             </div>
