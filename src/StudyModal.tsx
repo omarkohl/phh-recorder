@@ -46,7 +46,7 @@ const StudyModal = (
                         autoFocus
                         onChange={(e) => setAnswer(e.target.value)}
                         placeholder="Correct action"
-                        className="w-full rounded-lg border-gray-300 p-2 text-sm text-black"
+                        className="w-full rounded-lg border-gray-300 p-2 text-sm text-black h-48"
                     />
                     <div className="flex gap-4">
                         <Button
