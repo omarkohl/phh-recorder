@@ -444,27 +444,68 @@ function Actions(
                 <h3 className="text-lg font-medium mb-2 text-left">Action History</h3>
                 <div className="bg-gray-100 p-4 rounded-md text-left" id="history-log">
                     {props.actions.map((action) => (
-                        <div key={action.id} className="flex justify-between mt-1 items-center">
+                        <div key={action.id} className="flex justify-between items-center h-12">
                             <div className="font-bold w-1/5">
                                 {getDisplayName(findActorById(action.actorId))}
                             </div>
-                            {action instanceof DealBoardAction ? (
+                            {action instanceof DealBoardAction && (
                                 <>
                                     <div className="pl-1 w-1/5">deals</div>
-                                    <div className="flex pl-1 w-1/5">
+                                    <div className="flex pl-4 w-1/5">
                                         {action.board.map((card, i) => (
-                                            <CardSVG key={i} suit={card.suit} rank={card.rank} width={25}
-                                                     height={37} className="ml-1"/>
+                                            <CardSVG
+                                                key={i}
+                                                suit={card.suit}
+                                                rank={card.rank}
+                                                width={25}
+                                                height={37}
+                                                className={clsx({"ml-1": i !== 0})}
+                                            />
                                         ))}
                                     </div>
                                 </>
-                            ) : (
+                            )}
+                            {action instanceof ShowAction && (
                                 <>
-                                    <div className="pl-1 w-1/5">
-                                        {action.toString()}
+                                    <div className="pl-1 w-1/5">shows</div>
+                                    <div className="flex pl-4 w-1/5">
+                                        {action.cards.map((card, i) => (
+                                            <CardSVG
+                                                key={i}
+                                                suit={card.suit}
+                                                rank={card.rank}
+                                                width={25}
+                                                height={37}
+                                                className={clsx({"ml-1": i !== 0})}
+                                            />
+                                        ))}
                                     </div>
-                                    <div className="pl-1 w-1/5">
+                                </>
+                            )}
+                            {action instanceof BetRaiseAction && (
+                                <>
+                                    <div className="pl-1 w-1/5">bets/raises to</div>
+                                    <div className="pl-4 w-1/5">
+                                        {action.amount}
                                     </div>
+                                </>
+                            )}
+                            {action instanceof FoldAction && (
+                                <>
+                                    <div className="pl-1 w-1/5">folds</div>
+                                    <div className="pl-4 w-1/5"></div>
+                                </>
+                            )}
+                            {action instanceof CheckCallAction && (
+                                <>
+                                    <div className="pl-1 w-1/5">checks/calls</div>
+                                    <div className="pl-4 w-1/5"></div>
+                                </>
+                            )}
+                            {action instanceof MuckAction && (
+                                <>
+                                    <div className="pl-1 w-1/5">mucks</div>
+                                    <div className="pl-4 w-1/5"></div>
                                 </>
                             )}
                             <div className="pl-4 text-gray-500 w-1/5">
