@@ -6,7 +6,8 @@ import CardSVG from "./CardSVG.tsx";
 
 export function CardInput<T extends Card[]>(props: Readonly<{
     cards: T,
-    onCardsUpdate: (cards: T) => void
+    onCardsUpdate: (cards: T) => void,
+    className?: string,
 }>) {
     const [inputValue, setInputValue] = useState(props.cards.map(card => card.toString()).join(''));
     const [error, setError] = useState<string | null>(null);
@@ -39,27 +40,34 @@ export function CardInput<T extends Card[]>(props: Readonly<{
     };
 
     return (
-        <div>
-            <Input
-                type="text"
-                className={clsx(
-                    "w-full px-1 py-1 font-mono",
-                    error ? "border-2 border-red-500" : "border border-transparent",
-                    "bg-transparent cursor-pointer rounded-md",
-                    "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text",
-                    "text-gray-400 focus:text-black",
-                )}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onBlur={handleBlur}
-            />
-            {error && <p className="text-red-500 text-sm mt-1 text-left">{error}</p>}
-            {/* the cards should be placed next to each other */}
+        <div className={props.className}>
             <div className="flex">
                 {props.cards.map((card, i) => (
-                    <CardSVG key={i} suit={card.suit} rank={card.rank} width={25} height={37} className="ml-1"/>
+                    <CardSVG
+                        key={i}
+                        suit={card.suit}
+                        rank={card.rank}
+                        width={25}
+                        height={37}
+                        className={clsx({"ml-1": i !== 0})}
+                    />
                 ))}
+                <Input
+                    type="text"
+                    className={clsx(
+                        "w-full ml-1 px-1 py-1 font-mono",
+                        error ? "border-2 border-red-500" : "border border-transparent",
+                        "bg-transparent cursor-pointer rounded-md",
+                        "focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white focus:cursor-text",
+                        "text-sm",
+                        "text-gray-400 focus:text-black",
+                    )}
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onBlur={handleBlur}
+                />
             </div>
+            {error && <p className="text-red-500 text-sm mt-1 text-left">{error}</p>}
         </div>
     );
 }
