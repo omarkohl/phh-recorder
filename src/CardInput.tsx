@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import Card from './Card';
 import {Input} from "@headlessui/react";
 import clsx from "clsx";
+import CardSVG from "./CardSVG.tsx";
 
 export function CardInput<T extends Card[]>(props: Readonly<{
     cards: T,
@@ -52,6 +53,12 @@ export function CardInput<T extends Card[]>(props: Readonly<{
                 onBlur={handleBlur}
             />
             {error && <p className="text-red-500 text-sm mt-1 text-left">{error}</p>}
+            {/* the cards should be placed next to each other */}
+            <div className="flex mt-1">
+                {props.cards.map((card, i) => (
+                    <CardSVG key={i} suit={card.suit} rank={card.rank} width={25} height={37} className="ml-1"/>
+                ))}
+            </div>
         </div>
     );
 }

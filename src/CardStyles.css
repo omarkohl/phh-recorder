@@ -1,0 +1,80 @@
+/* temp */
+.dark-mode, .dark-mode tr {
+    background-color: darkgrey;
+}
+
+.svg-card rect {
+    stroke: black;
+    fill: white;
+}
+
+.svg-card.suit-h text, .svg-card.suit-d text {
+    fill: red;
+}
+
+.svg-card.suit-s text, .svg-card.suit-c text {
+    fill: black;
+}
+
+.dark-mode .svg-card.suit-h rect, .dark-mode .svg-card.suit-d rect {
+    stroke: black;
+    fill: red;
+}
+
+.dark-mode .svg-card.suit-s rect, .dark-mode .svg-card.suit-c rect {
+    stroke: black;
+    fill: black;
+}
+
+.dark-mode .svg-card.suit-u rect {
+    stroke: black;
+    fill: #474646;
+}
+
+.dark-mode .svg-card text {
+    fill: white;
+}
+
+.four-color-deck .svg-card.suit-h text {
+    fill: red;
+}
+
+.four-color-deck .svg-card.suit-d text {
+    fill: blue;
+}
+
+.four-color-deck .svg-card.suit-c text {
+    fill: green;
+}
+
+.four-color-deck .svg-card.suit-s text {
+    fill: black;
+}
+
+.four-color-deck .svg-card.suit-u text {
+    fill: #474646;
+}
+
+.dark-mode.four-color-deck .svg-card text {
+    fill: white;
+}
+
+.dark-mode.four-color-deck .svg-card.suit-h rect {
+    fill: red;
+}
+
+.dark-mode.four-color-deck .svg-card.suit-d rect {
+    fill: blue;
+}
+
+.dark-mode.four-color-deck .svg-card.suit-c rect {
+    fill: green;
+}
+
+.dark-mode.four-color-deck .svg-card.suit-s rect {
+    fill: black;
+}
+
+.dark-mode.four-color-deck .svg-card.suit-u rect {
+    fill: #474646;
+}
