@@ -1,4 +1,5 @@
 import {stringify} from "smol-toml";
+import { v4 as uuidv4 } from 'uuid';
 
 import {useCallback, useEffect, useState} from 'react';
 import './App.css';
@@ -18,7 +19,7 @@ const DEFAULT_FILE_NAME = 'game.phh';
 function App() {
     const [players, setPlayers] = useState<Player[]>([
         {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             name: 'Daniel',
             initialStack: 100,
             stack: 100,
@@ -28,7 +29,7 @@ function App() {
             position: 1
         },
         {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             name: 'Maria',
             initialStack: 100,
             stack: 100,
@@ -38,7 +39,7 @@ function App() {
             position: 2
         },
         {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             name: 'Liv',
             initialStack: 100,
             stack: 100,
@@ -80,7 +81,7 @@ function App() {
         setPlayersModified(true);
         const buttonIndex = players.findIndex(player => player.isButton);
         const newPlayer: Player = {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             name: name,
             initialStack: initialStack,
             stack: initialStack,

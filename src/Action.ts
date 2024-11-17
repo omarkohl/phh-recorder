@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import Card from "./Card.ts";
 
 
@@ -8,7 +9,7 @@ class Action {
     private studySpotAnswer: string;
 
     constructor(actorId: string, isStudySpot?: boolean, studySpotAnswer?: string) {
-        this.id = crypto.randomUUID();
+        this.id = uuidv4();
         this.actorId = actorId;
         this.isStudySpot = isStudySpot ?? false;
         this.studySpotAnswer = studySpotAnswer ?? "";
