@@ -11,9 +11,11 @@ export function CardInput<T extends Card[]>(props: Readonly<{
 }>) {
     const [inputValue, setInputValue] = useState(props.cards.map(card => card.toString()).join(''));
     const [error, setError] = useState<string | null>(null);
+    const [currentCards, setCurrentCards] = useState(props.cards);
 
     useEffect(() => {
         setInputValue(props.cards.map(card => card.toString()).join(''));
+        setCurrentCards(props.cards);
     }, [props.cards]);
 
     const handleBlur = () => {
@@ -33,6 +35,7 @@ export function CardInput<T extends Card[]>(props: Readonly<{
             const cards = cardStrings.map(cardStr => new Card(cardStr[0], cardStr[1])) as T;
             setError(null); // Clear error if validation passes
             setInputValue(cards.map(card => card.toString()).join(''));
+            setCurrentCards(cards);
             props.onCardsUpdate(cards);
         } catch (error: any) {
             setError(error.message);
@@ -42,7 +45,7 @@ export function CardInput<T extends Card[]>(props: Readonly<{
     return (
         <div className={props.className}>
             <div className="flex">
-                {props.cards.map((card, i) => (
+                {currentCards.map((card, i) => (
                     <CardSVG
                         key={i}
                         suit={card.suit}
